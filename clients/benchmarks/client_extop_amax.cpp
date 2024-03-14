@@ -24,6 +24,8 @@
  *
  *******************************************************************************/
 
+#include "program_options.hpp"
+
 #include <hip/hip_runtime.h>
 #include <hip/hip_runtime_api.h>
 #include <hipblaslt/hipblaslt-ext-op.h>
@@ -97,9 +99,9 @@ void printUsage(char* programName)
         << "\t-h, --help\t\t\tShow this help message\n"
         << "\t-t, --type\t\t\tType of problem, default is S.\n"
         << "\t-d, --dtype\t\t\tDest Type of problem, default is S.\n"
-        << "\t-m, --m\t\t\t\tSize of dim 0, default is 64\n"
-        << "\t-n, --n\t\t\t\tSize of dim 1, default is 64\n"
-        << "\t-i, --i\t\t\t\titeration\n"
+        << "\t-m, --sizem\t\t\t\tSize of dim 0, default is 64\n"
+        << "\t-n, --sizen\t\t\t\tSize of dim 1, default is 64\n"
+        << "\t-i, --iters\t\t\t\tIteration\n"
         << "\t--no_workspace \t\t\tDisable gpu workspace, default is false (use gpu workspace)\n"
         << "\t--flush \t\t\tFlush icache, default is false\n"
         << "\t--rotating \t\t\tUse rotating memory blocks for each iteration, size in MB, "
@@ -145,78 +147,142 @@ int parseArgs(int                       argc,
               bool&                     flush,
               uint32_t&                 rotateBuf)
 {
+    bool no_workspace;
+    std::string initStr
+
+    options_description desc("hipblaslt-bench-extop-amax command line options");
+    desc.add_options()
+        // clang-format off
+        ("sizem,m",
+         valueVec<size_t>(&m)->default_value(64), "Size of dim 0, default is 64")
+
+        ("sizen,n",
+         valueVec<size_t>(&n)->default_value(64), "Size of dim 1, default is 64")
+
+        ("type,t",
+         value<std::string>(&type)->default_value("S"), "Type of problem, default is S.")
+
+        ("dtype,d",
+         value<std::string>(&dtype)->default_value("S"), "Dest Type of problem, default is S.")
+
+        ("initialization",
+         value<std::string>(&initStr)->default_value("hpl"),
+         "Initialize matrix data."
+         "Options: rand_int, trig_float, hpl(floating), special, zero, (default is hpl)")
+
+        ("iters,i",
+         value<size_t>(&iter)->default_value(200), "Iteration, default is 200")
+
+        ("cold",
+         value<size_t>(&cold_iter)->default_value(0), "Cold Iterations to run before entering the timing loop, default = iters")
+
+        ("no_workspace",
+         value<bool>(&no_workspace)->default_value(false),
+         "Disable gpu workspace, default is false (use gpu workspace)")
+
+        ("rotating",
+         value<uint32_t>(&rotateBuf)->default_value(0),
+         "Use rotating memory blocks for each iteration, size in MB. Default is 0")
+
+        ("flush",
+        value<bool>(&flush)->default_value(false),
+        "Flush icache, default is false")
+
+        ("help,h", "Show this help message");
+    // clang-format on
+
+    // parse command line into arg structure and stack variables using desc
+    variables_map vm;
+    store(parse_command_line(argc, argv, desc), vm);
+    notify(vm);
+
+    workspace = !no_workspace;
+    if(initStr != "rand_int" && initStr != "trig_float" && initStr != "hpl"
+    && initStr != "special" && initStr != "zero")
+    {
+        std::cerr << "Invalid initialization type: " << initStr << '\n';
+        return EXIT_FAILURE;
+    }
+    init = string2hipblaslt_initialization(initStr);
+
+    if(vm.count("help"))
+    {
+        hipblaslt_cout << desc << std::endl;
+        return 0;
+    }
+
     if(argc <= 1)
     {
         return EXIT_SUCCESS;
     }
 
-    for(int i = 1; i < argc; ++i)
-    {
-        std::string arg = argv[i];
+    // for(int i = 1; i < argc; ++i)
+    // {
+    //     std::string arg = argv[i];
 
-        if((arg.at(0) == '-') || ((arg.at(0) == '-') && (arg.at(1) == '-')))
-        {
-            if((arg == "-h") || (arg == "--help"))
-            {
-                return EXIT_FAILURE;
-            }
-            else if(arg == "-t" || arg == "--type")
-            {
-                type = argv[++i];
-            }
-            else if(arg == "-d" || arg == "--dtype")
-            {
-                dtype = argv[++i];
-            }
-            else if(arg == "-m" || arg == "--m")
-            {
-                m = std::stoul(argv[++i]);
-            }
-            else if(arg == "-n" || arg == "--n")
-            {
-                n = std::stoul(argv[++i]);
-            }
-            else if(arg == "-i" || arg == "--i")
-            {
-                iter = std::stoul(argv[++i]);
-            }
-            else if(arg == "--initialization" || arg == "--init")
-            {
-                const std::string initStr{argv[++i]};
+    //     if((arg.at(0) == '-') || ((arg.at(0) == '-') && (arg.at(1) == '-')))
+    //     {
+    //         if((arg == "-h") || (arg == "--help"))
+    //         {
+    //             return EXIT_FAILURE;
+    //         }
+    //         else if(arg == "-t" || arg == "--type")
+    //         {
+    //             type = argv[++i];
+    //         }
+    //         else if(arg == "-d" || arg == "--dtype")
+    //         {
+    //             dtype = argv[++i];
+    //         }
+    //         else if(arg == "-m" || arg == "--m")
+    //         {
+    //             m = std::stoul(argv[++i]);
+    //         }
+    //         else if(arg == "-n" || arg == "--n")
+    //         {
+    //             n = std::stoul(argv[++i]);
+    //         }
+    //         else if(arg == "-i" || arg == "--i")
+    //         {
+    //             iter = std::stoul(argv[++i]);
+    //         }
+    //         else if(arg == "--initialization" || arg == "--init")
+    //         {
+    //             const std::string initStr{argv[++i]};
 
-                if(initStr != "rand_int" && initStr != "trig_float" && initStr != "hpl"
-                   && initStr != "special" && initStr != "zero")
-                {
-                    std::cerr << "Invalid initialization type: " << initStr << '\n';
-                    return EXIT_FAILURE;
-                }
+    //             if(initStr != "rand_int" && initStr != "trig_float" && initStr != "hpl"
+    //                && initStr != "special" && initStr != "zero")
+    //             {
+    //                 std::cerr << "Invalid initialization type: " << initStr << '\n';
+    //                 return EXIT_FAILURE;
+    //             }
 
-                init = string2hipblaslt_initialization(initStr);
-            }
-            else if(arg == "--rotating")
-            {
-                rotateBuf = std::stoul(argv[++i]);
-            }
-            else if(arg == "--cold")
-            {
-                cold_iter = std::stoul(argv[++i]);
-            }
-            else if(arg == "--no_workspace" || arg == "--no_wk")
-            {
-                workspace = false;
-            }
-            else if(arg == "--flush")
-            {
-                flush = true;
-            }
-        }
-        else
-        {
-            std::cerr << "error with " << arg << std::endl;
-            std::cerr << "option must start with - or --" << std::endl << std::endl;
-            return EXIT_FAILURE;
-        }
-    }
+    //             init = string2hipblaslt_initialization(initStr);
+    //         }
+    //         else if(arg == "--rotating")
+    //         {
+    //             rotateBuf = std::stoul(argv[++i]);
+    //         }
+    //         else if(arg == "--cold")
+    //         {
+    //             cold_iter = std::stoul(argv[++i]);
+    //         }
+    //         else if(arg == "--no_workspace" || arg == "--no_wk")
+    //         {
+    //             workspace = false;
+    //         }
+    //         else if(arg == "--flush")
+    //         {
+    //             flush = true;
+    //         }
+    //     }
+    //     else
+    //     {
+    //         std::cerr << "error with " << arg << std::endl;
+    //         std::cerr << "option must start with - or --" << std::endl << std::endl;
+    //         return EXIT_FAILURE;
+    //     }
+    // }
 
     return EXIT_SUCCESS;
 }
