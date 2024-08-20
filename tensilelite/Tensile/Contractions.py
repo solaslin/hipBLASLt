@@ -150,11 +150,6 @@ class ProblemType:
         else:
             rv.eType = dstType
 
-        if 'DataTypeAmaxD' in d:
-            rv.amaxDType = DataType(d['DataTypeAmaxD'])
-        else:
-            rv.amaxDType = computeType
-
         rv.computeInputType = srcType
         rv.cType = dstType
         rv.dType = dstType
@@ -348,8 +343,8 @@ class ProblemType:
                 predicates.append(ProblemPredicate("BetaZero"))
             predicates.append(ProblemPredicate("BiasDataTypeWhiteList", value=self.biasDataTypeWhiteList))
             predicates.append(ProblemPredicate("BiasSrcWhiteList", value=self.biasSrcWhiteList))
-            predicates.append(ProblemPredicate("AmaxDCheck", value=self.outputAmaxD))
-            if self.activationType in ['all', 'hipblaslt_all']:
+            predicates.append(ProblemPredicate("AmaxDCheck"))
+            if self.activationType == 'all':
                 exportType = ActivationType.Export.GRADONLY if self.useGradient else ActivationType.Export.NORMAL
                 supportedBy = ActivationType.SupportedBy.ALL if self.activationType == 'all' else ActivationType.SupportedBy.HIPBLASLT
                 enumList = [actEnum.capitalize() for actEnum in ActivationType.getEnumStrList(self.activationComputeDataType, supportedBy, exportType=exportType)]
@@ -462,7 +457,7 @@ class ProblemPredicate(Properties.Predicate):
         if ('GlobalSplitU' in state) and (state['GlobalSplitU'] > 1):
             if ('_GlobalAccumulation' not in state) or (state['_GlobalAccumulation'] != 'MultipleBuffer'):
                 rv += [cls("DeterministicMode", value = False)]
-        
+
         if ('StreamK' in state) and (state['StreamK'] > 0) and ('StreamKAtomic' in state) and (state['StreamKAtomic'] == 1):
             # StreamKAtomic = 1 uses atomic for partial tiles
             rv += [cls("DeterministicMode", value = False)]
