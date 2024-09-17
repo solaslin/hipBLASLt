@@ -52,6 +52,8 @@ namespace Tensile
             , m_f32XdlMathOp(DataType::Float)
             , m_activationComputeType(DataType::Float)
             , m_useUserArgs(false)
+            , m_swizzleTensorA(false)
+            , m_swizzleTensorB(false)
         {
             using std::static_pointer_cast;
 
@@ -186,6 +188,16 @@ namespace Tensile
             if(args.count("f32-xdl-math-op"))
             {
                 m_f32XdlMathOp = args["f32-xdl-math-op"].as<DataType>();
+            }
+
+            if(args.count("swizzle-tensor-a"))
+            {
+                m_swizzleTensorA = args["swizzle-tensor-a"].as<bool>();
+            }
+
+            if(args.count("swizzle-tensor-b"))
+            {
+                m_swizzleTensorB = args["swizzle-tensor-b"].as<bool>();
             }
 
             if(args.count("use-user-args"))

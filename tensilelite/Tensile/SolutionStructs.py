@@ -496,6 +496,12 @@ class ProblemType(Mapping):
       name += self["F32XdlMathOp"].toChar()
       name += "_"
 
+    if self["SwizzleTensorA"]:
+      name += "STA_"
+
+    if self["SwizzleTensorB"]:
+      name += "STB_"
+
     # Other
     if self["UseBeta"]: name += "B"
     if self["HighPrecisionAccumulate"] and not self["SilentHighPrecisionAccumulate"]: name += "H"
@@ -2731,6 +2737,13 @@ class Solution(collections.abc.Mapping):
         if (state["ProblemType"]["DataTypeA"].isFloat8() == False) and (state["ProblemType"]["DataTypeB"].isFloat8() == False):
             reject(state, "one of DataTypeA or DataTypeB need to be float8")
             return
+
+    #for tensor swizzling, we force pack-k == 2
+    for tc in ("A", "B",):
+      if state["ProblemType"][f"SwizzleTensor{tc}"]:
+        if not state["EnableMatrixInstruction"]:
+          reject(state, f"Tensor {tc} swizzling supports MI only")
+        state[f"GlobalReadVectorWidth{tc}"] = state[f"MIInputPerThread{tc}"] * 2
 
     def calcOptGRVW(lrvw: int, unrollMajorLDS: bool, datatype: DataType) -> int:
       # with UnrollMajorLDS, GRVW need to less or equal than LRVW to have conflict free LDS read with padding.
