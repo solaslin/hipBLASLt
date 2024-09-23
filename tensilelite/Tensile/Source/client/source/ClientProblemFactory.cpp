@@ -327,6 +327,8 @@ namespace Tensile
                             rv.back().setSparse(m_sparse);
                             rv.back().setActivationType(m_activationType);
                             rv.back().setWorkspaceSize(m_maxWorkspaceSize);
+                            rv.back().setSwizzleTensorA(m_swizzleTensorA);
+                            rv.back().setSwizzleTensorB(m_swizzleTensorB);
                             if(k < m_biasTypeArgs.size())
                             {
                                 auto length

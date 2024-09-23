@@ -2745,6 +2745,14 @@ class Solution(collections.abc.Mapping):
           reject(state, f"Tensor {tc} swizzling supports MI only")
         state[f"GlobalReadVectorWidth{tc}"] = state[f"MIInputPerThread{tc}"] * 2
 
+    if state["ProblemType"]["SwizzleTensorA"]:
+      if state["ProblemType"]["TransposeA"] is False:
+        reject(state, f"Tensor A swizzling supports TN or TT only")
+
+    if state["ProblemType"]["SwizzleTensorB"]:
+      if state["ProblemType"]["TransposeB"] is True:
+        reject(state, f"Tensor B swizzling supports NN or TN only")
+
     def calcOptGRVW(lrvw: int, unrollMajorLDS: bool, datatype: DataType) -> int:
       # with UnrollMajorLDS, GRVW need to less or equal than LRVW to have conflict free LDS read with padding.
       optGRVW = lrvw if unrollMajorLDS else 4 / datatype.numRegisters()

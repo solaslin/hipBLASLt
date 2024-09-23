@@ -331,6 +331,8 @@ namespace Tensile
                         initializeCPUInputs(problem);
                     if(m_problemDependentData)
                         copyValidToGPUBuffer(problem);
+                    if(problem.swizzleTensorA() || problem.swizzleTensorB())
+                        copySwizzledToGPUBuffer(problem);
 
                     // gpu to gpu
                     copyInputs(m_gpuPtrs,
@@ -908,6 +910,8 @@ namespace Tensile
             void allocNewGPUInputs();
 
             void copyValidToGPUBuffer(ContractionProblemGemm const& problem);
+
+            void copySwizzledToGPUBuffer(ContractionProblemGemm const& problem);
 
             void initializeGPUBatchedInputs(ContractionProblemGemm const& problem);
 
