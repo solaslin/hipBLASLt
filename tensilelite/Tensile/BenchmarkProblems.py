@@ -51,8 +51,6 @@ def generateForkedSolutions(problemType, constantParams, forkPermutations):
     solutions = []
     solutionSet = set()
     for perm in forkPermutations:
-        if len(perm) == 0:
-            continue
         solution = {"ProblemType": deepcopy(problemType.state)}
         solution.update(constantParams)
         solution.update(perm)
@@ -273,7 +271,7 @@ def benchmarkProblemType(problemTypeConfig, problemSizeGroupConfig, problemSizeG
         if not cacheValid:
             # enumerate benchmark permutations and create resulting solution objects
             forkPermutations = constructForkPermutations(benchmarkStep.forkParams, \
-                    benchmarkStep.paramGroups)
+                    benchmarkStep.paramGroups) if problemSizeGroupConfig["ForkParameters"] else []
             maxPossibleSolutions = len(forkPermutations)
 
             regSolutions = generateForkedSolutions(benchmarkProcess.problemType, \
