@@ -314,7 +314,7 @@ namespace Tensor
 
             for(size_t i = 0; i < numElements; ++i)
             {
-                os << data[i] << ", ";
+                os << float(data[i]) << ", ";
             }
 
             os << "]\n";
@@ -331,7 +331,7 @@ namespace Tensor
                 tensor.getDesc().getShape(),
                 0,
                 indices,
-                [&os, &tensor](const Indices& idx) { os << tensor.getValue<T>(idx) << ", "; },
+                [&os, &tensor](const Indices& idx) { os << float(tensor.getValue<T>(idx)) << ", "; },
                 [&os](size_t dim) { os << "["; },
                 [&os, &tensor](size_t dim) {
                     os << "], ";

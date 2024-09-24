@@ -51,6 +51,8 @@ def generateForkedSolutions(problemType, constantParams, forkPermutations):
     solutions = []
     solutionSet = set()
     for perm in forkPermutations:
+        if len(perm) == 0:
+            continue
         solution = {"ProblemType": deepcopy(problemType.state)}
         solution.update(constantParams)
         solution.update(perm)

@@ -1715,7 +1715,8 @@ namespace Tensile
                     || (problem.swizzleTensorB() && i == ContractionProblemGemm::TENSOR::B);
 
                 void *ptr{};
-                //FIXME: Not good, need to use format to specify the way for swizzling
+                //FIXME: Not good, need to use format to specify the way for swizzling.
+                //TODO: Support more swizzling type, such as 32x32x8, currently we have 16x16x8 only.
                 if(needSwizzle)
                 {
                     using Tensor = Tensor::Manipulation::Tensor;
@@ -1723,9 +1724,9 @@ namespace Tensile
                     constexpr size_t MiK = 16;
                     constexpr size_t MiKv = 4;
                     constexpr size_t PackK = 2;
-                    auto tmpTensor = Tensor::create<Half>(desc.sizes());
                     auto unrolledSize = desc.sizes()[0];
                     auto tiledSize = desc.sizes()[1];
+                    auto tmpTensor = Tensor::create<Half>({tiledSize, unrolledSize});
                     memcpy(tmpTensor.as<void>(), p.cpuInput.valid.get(), tmpTensor.getNumBytes());
                     tmpTensor.reshape({tiledSize / MiM, MiM, unrolledSize / (MiK * PackK), MiK / MiKv , MiKv * PackK});
                     Tensor permuted = permute(tmpTensor, {0, 2, 3, 1, 4});
