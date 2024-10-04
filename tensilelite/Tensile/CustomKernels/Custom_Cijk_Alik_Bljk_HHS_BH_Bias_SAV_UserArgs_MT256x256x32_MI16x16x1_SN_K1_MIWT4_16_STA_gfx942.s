@@ -65,8 +65,10 @@ custom.config:
   1LDSBuffer: 0
   ScheduleIterAlg: 3
   DepthU: 32
-  StaggerU: 0
+  StaggerU: 8
+  StaggerUStride: 64
   WorkGroupMapping: 8
+  WorkGroupMappingXCC: 8
   WaveSeparateGlobalReadA: 1
   WaveSeparateGlobalReadB: 1
   GlobalReadVectorWidthA: 8
@@ -1934,21 +1936,7 @@ s_waitcnt vmcnt(4)                                 // global read wait for Direc
 /*  mfmaIndex:0  */
 ds_read_b128 v[vgprValuB_X0_I0+0:vgprValuB_X0_I0+0+3], v[vgprLocalReadAddrB] offset:0 // L -> Reg lro=0 swapByteOffset=0 ti=128 vIdx=0 eIdx=0 rIdx=0 oIdx=0 buffer=0 iui=0
 ds_read_b128 v[vgprValuB_X0_I0+4:vgprValuB_X0_I0+4+3], v[vgprLocalReadAddrB] offset:64 // L -> Reg lro=0 swapByteOffset=0 ti=128 vIdx=0 eIdx=1 rIdx=0 oIdx=0 buffer=0 iui=0
-ds_read_b128 v[vgprValuB_X0_I0+8:vgprValuB_X0_I0+8+3], v[vgprLocalReadAddrB] offset:128 // L -> Reg lro=0 swapByteOffset=0 ti=128 vIdx=0 eIdx=2 rIdx=0 oIdx=0 buffer=0 iui=0
-ds_read_b128 v[vgprValuB_X0_I0+12:vgprValuB_X0_I0+12+3], v[vgprLocalReadAddrB] offset:192 // L -> Reg lro=0 swapByteOffset=0 ti=128 vIdx=0 eIdx=3 rIdx=0 oIdx=0 buffer=0 iui=0
-ds_read_b128 v[vgprValuB_X0_I0+16:vgprValuB_X0_I0+16+3], v[vgprLocalReadAddrB] offset:256 // L -> Reg lro=0 swapByteOffset=0 ti=128 vIdx=0 eIdx=4 rIdx=0 oIdx=0 buffer=0 iui=0
-ds_read_b128 v[vgprValuB_X0_I0+20:vgprValuB_X0_I0+20+3], v[vgprLocalReadAddrB] offset:320 // L -> Reg lro=0 swapByteOffset=0 ti=128 vIdx=0 eIdx=5 rIdx=0 oIdx=0 buffer=0 iui=0
-ds_read_b128 v[vgprValuB_X0_I0+24:vgprValuB_X0_I0+24+3], v[vgprLocalReadAddrB] offset:384 // L -> Reg lro=0 swapByteOffset=0 ti=128 vIdx=0 eIdx=6 rIdx=0 oIdx=0 buffer=0 iui=0
-ds_read_b128 v[vgprValuB_X0_I0+28:vgprValuB_X0_I0+28+3], v[vgprLocalReadAddrB] offset:448 // L -> Reg lro=0 swapByteOffset=0 ti=128 vIdx=0 eIdx=7 rIdx=0 oIdx=0 buffer=0 iui=0
-ds_read_b128 v[vgprValuB_X0_I0+32:vgprValuB_X0_I0+32+3], v[vgprLocalReadAddrB] offset:8704 // L -> Reg lro=0 swapByteOffset=0 ti=128 vIdx=1 eIdx=0 rIdx=0 oIdx=0 buffer=0 iui=0
-ds_read_b128 v[vgprValuB_X0_I0+36:vgprValuB_X0_I0+36+3], v[vgprLocalReadAddrB] offset:8768 // L -> Reg lro=0 swapByteOffset=0 ti=128 vIdx=1 eIdx=1 rIdx=0 oIdx=0 buffer=0 iui=0
-ds_read_b128 v[vgprValuB_X0_I0+40:vgprValuB_X0_I0+40+3], v[vgprLocalReadAddrB] offset:8832 // L -> Reg lro=0 swapByteOffset=0 ti=128 vIdx=1 eIdx=2 rIdx=0 oIdx=0 buffer=0 iui=0
-ds_read_b128 v[vgprValuB_X0_I0+44:vgprValuB_X0_I0+44+3], v[vgprLocalReadAddrB] offset:8896 // L -> Reg lro=0 swapByteOffset=0 ti=128 vIdx=1 eIdx=3 rIdx=0 oIdx=0 buffer=0 iui=0
-ds_read_b128 v[vgprValuB_X0_I0+48:vgprValuB_X0_I0+48+3], v[vgprLocalReadAddrB] offset:8960 // L -> Reg lro=0 swapByteOffset=0 ti=128 vIdx=1 eIdx=4 rIdx=0 oIdx=0 buffer=0 iui=0
-ds_read_b128 v[vgprValuB_X0_I0+52:vgprValuB_X0_I0+52+3], v[vgprLocalReadAddrB] offset:9024 // L -> Reg lro=0 swapByteOffset=0 ti=128 vIdx=1 eIdx=5 rIdx=0 oIdx=0 buffer=0 iui=0
-ds_read_b128 v[vgprValuB_X0_I0+56:vgprValuB_X0_I0+56+3], v[vgprLocalReadAddrB] offset:9088 // L -> Reg lro=0 swapByteOffset=0 ti=128 vIdx=1 eIdx=6 rIdx=0 oIdx=0 buffer=0 iui=0
-ds_read_b128 v[vgprValuB_X0_I0+60:vgprValuB_X0_I0+60+3], v[vgprLocalReadAddrB] offset:9152 // L -> Reg lro=0 swapByteOffset=0 ti=128 vIdx=1 eIdx=7 rIdx=0 oIdx=0 buffer=0 iui=0
-s_waitcnt lgkmcnt(0)                               // wait for prior local read local write old=0, new=0 newLW=0 newLR=0 for iteration == 0
+s_waitcnt lgkmcnt(1)                               // wait for prior local read local write old=0, new=0 newLW=0 newLR=0 for iteration == 0
 v_mfma_f32_16x16x16_f16 acc[0:3], v[vgprG2LA+0+0:vgprG2LA+0+0+1], v[vgprValuB_X0_I0+0+0+0:vgprValuB_X0_I0+0+0+0+1], acc[0:3] // left value = acc[0+0:3+0]
 /*  mfmaIndex:1  */
 /* localReadsVacancy: latencyLeft 2 */
@@ -1967,7 +1955,8 @@ v_mfma_f32_16x16x16_f16 acc[12:15], v[vgprG2LA+12+0:vgprG2LA+12+0+1], v[vgprValu
 /*  mfmaIndex:4  */
 /* localReadsVacancy: latencyLeft 2 */
 s_add_u32 s[sgprSrdA+0], s[sgprSrdA+0], s28        // gra SRD += inc(lower)
-s_waitcnt lgkmcnt(15)                              // wait for prior local read local write
+ds_read_b128 v[vgprValuB_X0_I0+8:vgprValuB_X0_I0+8+3], v[vgprLocalReadAddrB] offset:128 // L -> Reg lro=0 swapByteOffset=0 ti=128 vIdx=0 eIdx=2 rIdx=0 oIdx=0 buffer=0 iui=0
+s_waitcnt lgkmcnt(1)                              // wait for prior local read local write
 v_mfma_f32_16x16x16_f16 acc[16:19], v[vgprG2LA+0+0:vgprG2LA+0+0+1], v[vgprValuB_X0_I0+4+0+0:vgprValuB_X0_I0+4+0+0+1], acc[16:19] // left value = acc[16+0:19+0]
 /*  mfmaIndex:5  */
 /* localReadsVacancy: latencyLeft 2 */
@@ -1984,6 +1973,8 @@ v_mfma_f32_16x16x16_f16 acc[28:31], v[vgprG2LA+12+0:vgprG2LA+12+0+1], v[vgprValu
 /*  mfmaIndex:8  */
 /* localReadsVacancy: latencyLeft 2 */
 s_cmp_eq_u32 s[sgprShadowLimitA+1], 0              // are we within 2^32?
+ds_read_b128 v[vgprValuB_X0_I0+12:vgprValuB_X0_I0+12+3], v[vgprLocalReadAddrB] offset:192 // L -> Reg lro=0 swapByteOffset=0 ti=128 vIdx=0 eIdx=3 rIdx=0 oIdx=0 buffer=0 iui=0
+s_waitcnt lgkmcnt(1)                              // wait for prior local read local write
 v_mfma_f32_16x16x16_f16 acc[32:35], v[vgprG2LA+0+0:vgprG2LA+0+0+1], v[vgprValuB_X0_I0+8+0+0:vgprValuB_X0_I0+8+0+0+1], acc[32:35] // left value = acc[32+0:35+0]
 /*  mfmaIndex:9  */
 /* localReadsVacancy: latencyLeft 2 */
@@ -2002,6 +1993,8 @@ v_mfma_f32_16x16x16_f16 acc[44:47], v[vgprG2LA+12+0:vgprG2LA+12+0+1], v[vgprValu
 /*  mfmaIndex:12  */
 /* localReadsVacancy: latencyLeft 2 */
 s_cselect_b32 s29, s[sgprWrapUB+1], 0              // incUpper <- ?
+ds_read_b128 v[vgprValuB_X0_I0+16:vgprValuB_X0_I0+16+3], v[vgprLocalReadAddrB] offset:256 // L -> Reg lro=0 swapByteOffset=0 ti=128 vIdx=0 eIdx=4 rIdx=0 oIdx=0 buffer=0 iui=0
+s_waitcnt lgkmcnt(1)                              // wait for prior local read local write
 v_mfma_f32_16x16x16_f16 acc[48:51], v[vgprG2LA+0+0:vgprG2LA+0+0+1], v[vgprValuB_X0_I0+12+0+0:vgprValuB_X0_I0+12+0+0+1], acc[48:51] // left value = acc[48+0:51+0]
 /*  mfmaIndex:13  */
 /* localReadsVacancy: latencyLeft 2 */
@@ -2018,6 +2011,8 @@ v_mfma_f32_16x16x16_f16 acc[60:63], v[vgprG2LA+12+0:vgprG2LA+12+0+1], v[vgprValu
 /*  mfmaIndex:16  */
 /* localReadsVacancy: latencyLeft 2 */
 s_subb_u32 s[sgprShadowLimitB+1], s[sgprShadowLimitB+1], s29 // limit -= inc)
+ds_read_b128 v[vgprValuB_X0_I0+20:vgprValuB_X0_I0+20+3], v[vgprLocalReadAddrB] offset:320 // L -> Reg lro=0 swapByteOffset=0 ti=128 vIdx=0 eIdx=5 rIdx=0 oIdx=0 buffer=0 iui=0
+s_waitcnt lgkmcnt(1)                              // wait for prior local read local write
 v_mfma_f32_16x16x16_f16 acc[64:67], v[vgprG2LA+0+0:vgprG2LA+0+0+1], v[vgprValuB_X0_I0+16+0+0:vgprValuB_X0_I0+16+0+0+1], acc[64:67] // left value = acc[64+0:67+0]
 /*  mfmaIndex:17  */
 /* localReadsVacancy: latencyLeft 2 */
@@ -2032,6 +2027,8 @@ v_mfma_f32_16x16x16_f16 acc[72:75], v[vgprG2LA+8+0:vgprG2LA+8+0+1], v[vgprValuB_
 v_mfma_f32_16x16x16_f16 acc[76:79], v[vgprG2LA+12+0:vgprG2LA+12+0+1], v[vgprValuB_X0_I0+16+0+0:vgprValuB_X0_I0+16+0+0+1], acc[76:79] // left value = acc[76+0:79+0]
 /*  mfmaIndex:20  */
 /* localReadsVacancy: latencyLeft 2 */
+ds_read_b128 v[vgprValuB_X0_I0+24:vgprValuB_X0_I0+24+3], v[vgprLocalReadAddrB] offset:384 // L -> Reg lro=0 swapByteOffset=0 ti=128 vIdx=0 eIdx=6 rIdx=0 oIdx=0 buffer=0 iui=0
+s_waitcnt lgkmcnt(1)                              // wait for prior local read local write
 v_mfma_f32_16x16x16_f16 acc[80:83], v[vgprG2LA+0+0:vgprG2LA+0+0+1], v[vgprValuB_X0_I0+20+0+0:vgprValuB_X0_I0+20+0+0+1], acc[80:83] // left value = acc[80+0:83+0]
 /*  mfmaIndex:21  */
 /* localReadsVacancy: latencyLeft 2 */
@@ -2044,6 +2041,8 @@ v_mfma_f32_16x16x16_f16 acc[88:91], v[vgprG2LA+8+0:vgprG2LA+8+0+1], v[vgprValuB_
 v_mfma_f32_16x16x16_f16 acc[92:95], v[vgprG2LA+12+0:vgprG2LA+12+0+1], v[vgprValuB_X0_I0+20+0+0:vgprValuB_X0_I0+20+0+0+1], acc[92:95] // left value = acc[92+0:95+0]
 /*  mfmaIndex:24  */
 /* localReadsVacancy: latencyLeft 2 */
+ds_read_b128 v[vgprValuB_X0_I0+28:vgprValuB_X0_I0+28+3], v[vgprLocalReadAddrB] offset:448 // L -> Reg lro=0 swapByteOffset=0 ti=128 vIdx=0 eIdx=7 rIdx=0 oIdx=0 buffer=0 iui=0
+s_waitcnt lgkmcnt(1)                              // wait for prior local read local write
 v_mfma_f32_16x16x16_f16 acc[96:99], v[vgprG2LA+0+0:vgprG2LA+0+0+1], v[vgprValuB_X0_I0+24+0+0:vgprValuB_X0_I0+24+0+0+1], acc[96:99] // left value = acc[96+0:99+0]
 /*  mfmaIndex:25  */
 /* localReadsVacancy: latencyLeft 2 */
@@ -2057,6 +2056,8 @@ buffer_load_dwordx4 v[vgprG2LA2+0:vgprG2LA2+0+3], v[vgprGlobalReadOffsetA+0], s[
 v_mfma_f32_16x16x16_f16 acc[108:111], v[vgprG2LA+12+0:vgprG2LA+12+0+1], v[vgprValuB_X0_I0+24+0+0:vgprValuB_X0_I0+24+0+0+1], acc[108:111] // left value = acc[108+0:111+0]
 /*  mfmaIndex:28  */
 /* localReadsVacancy: latencyLeft 2 */
+ds_read_b128 v[vgprValuB_X0_I0+32:vgprValuB_X0_I0+32+3], v[vgprLocalReadAddrB] offset:8704 // L -> Reg lro=0 swapByteOffset=0 ti=128 vIdx=1 eIdx=0 rIdx=0 oIdx=0 buffer=0 iui=0
+s_waitcnt lgkmcnt(1)                              // wait for prior local read local write
 v_mfma_f32_16x16x16_f16 acc[112:115], v[vgprG2LA+0+0:vgprG2LA+0+0+1], v[vgprValuB_X0_I0+28+0+0:vgprValuB_X0_I0+28+0+0+1], acc[112:115] // left value = acc[112+0:115+0]
 /*  mfmaIndex:29  */
 /* localReadsVacancy: latencyLeft 2 */
@@ -2069,6 +2070,8 @@ v_mfma_f32_16x16x16_f16 acc[120:123], v[vgprG2LA+8+0:vgprG2LA+8+0+1], v[vgprValu
 v_mfma_f32_16x16x16_f16 acc[124:127], v[vgprG2LA+12+0:vgprG2LA+12+0+1], v[vgprValuB_X0_I0+28+0+0:vgprValuB_X0_I0+28+0+0+1], acc[124:127] // left value = acc[124+0:127+0]
 /*  mfmaIndex:32  */
 /* localReadsVacancy: latencyLeft 2 */
+ds_read_b128 v[vgprValuB_X0_I0+36:vgprValuB_X0_I0+36+3], v[vgprLocalReadAddrB] offset:8768 // L -> Reg lro=0 swapByteOffset=0 ti=128 vIdx=1 eIdx=1 rIdx=0 oIdx=0 buffer=0 iui=0
+s_waitcnt lgkmcnt(1)                              // wait for prior local read local write
 v_mfma_f32_16x16x16_f16 acc[128:131], v[vgprG2LA+0+0:vgprG2LA+0+0+1], v[vgprValuB_X0_I0+32+0+0:vgprValuB_X0_I0+32+0+0+1], acc[128:131] // left value = acc[128+0:131+0]
 /*  mfmaIndex:33  */
 /* localReadsVacancy: latencyLeft 2 */
@@ -2081,6 +2084,8 @@ v_mfma_f32_16x16x16_f16 acc[136:139], v[vgprG2LA+8+0:vgprG2LA+8+0+1], v[vgprValu
 v_mfma_f32_16x16x16_f16 acc[140:143], v[vgprG2LA+12+0:vgprG2LA+12+0+1], v[vgprValuB_X0_I0+32+0+0:vgprValuB_X0_I0+32+0+0+1], acc[140:143] // left value = acc[140+0:143+0]
 /*  mfmaIndex:36  */
 /* localReadsVacancy: latencyLeft 2 */
+ds_read_b128 v[vgprValuB_X0_I0+40:vgprValuB_X0_I0+40+3], v[vgprLocalReadAddrB] offset:8832 // L -> Reg lro=0 swapByteOffset=0 ti=128 vIdx=1 eIdx=2 rIdx=0 oIdx=0 buffer=0 iui=0
+s_waitcnt lgkmcnt(1)                              // wait for prior local read local write
 v_mfma_f32_16x16x16_f16 acc[144:147], v[vgprG2LA+0+0:vgprG2LA+0+0+1], v[vgprValuB_X0_I0+36+0+0:vgprValuB_X0_I0+36+0+0+1], acc[144:147] // left value = acc[144+0:147+0]
 /*  mfmaIndex:37  */
 /* localReadsVacancy: latencyLeft 2 */
@@ -2093,6 +2098,8 @@ v_mfma_f32_16x16x16_f16 acc[152:155], v[vgprG2LA+8+0:vgprG2LA+8+0+1], v[vgprValu
 v_mfma_f32_16x16x16_f16 acc[156:159], v[vgprG2LA+12+0:vgprG2LA+12+0+1], v[vgprValuB_X0_I0+36+0+0:vgprValuB_X0_I0+36+0+0+1], acc[156:159] // left value = acc[156+0:159+0]
 /*  mfmaIndex:40  */
 /* localReadsVacancy: latencyLeft 2 */
+ds_read_b128 v[vgprValuB_X0_I0+44:vgprValuB_X0_I0+44+3], v[vgprLocalReadAddrB] offset:8896 // L -> Reg lro=0 swapByteOffset=0 ti=128 vIdx=1 eIdx=3 rIdx=0 oIdx=0 buffer=0 iui=0
+s_waitcnt lgkmcnt(1)                              // wait for prior local read local write
 v_mfma_f32_16x16x16_f16 acc[160:163], v[vgprG2LA+0+0:vgprG2LA+0+0+1], v[vgprValuB_X0_I0+40+0+0:vgprValuB_X0_I0+40+0+0+1], acc[160:163] // left value = acc[160+0:163+0]
 /*  mfmaIndex:41  */
 /* localReadsVacancy: latencyLeft 2 */
@@ -2106,6 +2113,8 @@ v_mfma_f32_16x16x16_f16 acc[168:171], v[vgprG2LA+8+0:vgprG2LA+8+0+1], v[vgprValu
 v_mfma_f32_16x16x16_f16 acc[172:175], v[vgprG2LA+12+0:vgprG2LA+12+0+1], v[vgprValuB_X0_I0+40+0+0:vgprValuB_X0_I0+40+0+0+1], acc[172:175] // left value = acc[172+0:175+0]
 /*  mfmaIndex:44  */
 /* localReadsVacancy: latencyLeft 2 */
+ds_read_b128 v[vgprValuB_X0_I0+48:vgprValuB_X0_I0+48+3], v[vgprLocalReadAddrB] offset:8960 // L -> Reg lro=0 swapByteOffset=0 ti=128 vIdx=1 eIdx=4 rIdx=0 oIdx=0 buffer=0 iui=0
+s_waitcnt lgkmcnt(1)                              // wait for prior local read local write
 v_mfma_f32_16x16x16_f16 acc[176:179], v[vgprG2LA+0+0:vgprG2LA+0+0+1], v[vgprValuB_X0_I0+44+0+0:vgprValuB_X0_I0+44+0+0+1], acc[176:179] // left value = acc[176+0:179+0]
 /*  mfmaIndex:45  */
 /* localReadsVacancy: latencyLeft 2 */
@@ -2118,6 +2127,8 @@ v_mfma_f32_16x16x16_f16 acc[184:187], v[vgprG2LA+8+0:vgprG2LA+8+0+1], v[vgprValu
 v_mfma_f32_16x16x16_f16 acc[188:191], v[vgprG2LA+12+0:vgprG2LA+12+0+1], v[vgprValuB_X0_I0+44+0+0:vgprValuB_X0_I0+44+0+0+1], acc[188:191] // left value = acc[188+0:191+0]
 /*  mfmaIndex:48  */
 /* localReadsVacancy: latencyLeft 2 */
+ds_read_b128 v[vgprValuB_X0_I0+52:vgprValuB_X0_I0+52+3], v[vgprLocalReadAddrB] offset:9024 // L -> Reg lro=0 swapByteOffset=0 ti=128 vIdx=1 eIdx=5 rIdx=0 oIdx=0 buffer=0 iui=0
+s_waitcnt lgkmcnt(1)                             // wait for prior local read local write
 v_mfma_f32_16x16x16_f16 acc[192:195], v[vgprG2LA+0+0:vgprG2LA+0+0+1], v[vgprValuB_X0_I0+48+0+0:vgprValuB_X0_I0+48+0+0+1], acc[192:195] // left value = acc[192+0:195+0]
 /*  mfmaIndex:49  */
 /* localReadsVacancy: latencyLeft 2 */
@@ -2130,6 +2141,8 @@ v_mfma_f32_16x16x16_f16 acc[200:203], v[vgprG2LA+8+0:vgprG2LA+8+0+1], v[vgprValu
 v_mfma_f32_16x16x16_f16 acc[204:207], v[vgprG2LA+12+0:vgprG2LA+12+0+1], v[vgprValuB_X0_I0+48+0+0:vgprValuB_X0_I0+48+0+0+1], acc[204:207] // left value = acc[204+0:207+0]
 /*  mfmaIndex:52  */
 /* localReadsVacancy: latencyLeft 2 */
+ds_read_b128 v[vgprValuB_X0_I0+56:vgprValuB_X0_I0+56+3], v[vgprLocalReadAddrB] offset:9088 // L -> Reg lro=0 swapByteOffset=0 ti=128 vIdx=1 eIdx=6 rIdx=0 oIdx=0 buffer=0 iui=0
+s_waitcnt lgkmcnt(1)                             // wait for prior local read local write
 v_mfma_f32_16x16x16_f16 acc[208:211], v[vgprG2LA+0+0:vgprG2LA+0+0+1], v[vgprValuB_X0_I0+52+0+0:vgprValuB_X0_I0+52+0+0+1], acc[208:211] // left value = acc[208+0:211+0]
 /*  mfmaIndex:53  */
 /* localReadsVacancy: latencyLeft 2 */
@@ -2143,6 +2156,8 @@ buffer_load_dwordx4 v[vgprG2LA2+8:vgprG2LA2+8+3], v[vgprGlobalReadOffsetA+2], s[
 v_mfma_f32_16x16x16_f16 acc[220:223], v[vgprG2LA+12+0:vgprG2LA+12+0+1], v[vgprValuB_X0_I0+52+0+0:vgprValuB_X0_I0+52+0+0+1], acc[220:223] // left value = acc[220+0:223+0]
 /*  mfmaIndex:56  */
 /* localReadsVacancy: latencyLeft 2 */
+ds_read_b128 v[vgprValuB_X0_I0+60:vgprValuB_X0_I0+60+3], v[vgprLocalReadAddrB] offset:9152 // L -> Reg lro=0 swapByteOffset=0 ti=128 vIdx=1 eIdx=7 rIdx=0 oIdx=0 buffer=0 iui=0
+s_waitcnt lgkmcnt(1)                             // wait for prior local read local write
 v_mfma_f32_16x16x16_f16 acc[224:227], v[vgprG2LA+0+0:vgprG2LA+0+0+1], v[vgprValuB_X0_I0+56+0+0:vgprValuB_X0_I0+56+0+0+1], acc[224:227] // left value = acc[224+0:227+0]
 /*  mfmaIndex:57  */
 /* localReadsVacancy: latencyLeft 2 */
@@ -2155,6 +2170,7 @@ v_mfma_f32_16x16x16_f16 acc[232:235], v[vgprG2LA+8+0:vgprG2LA+8+0+1], v[vgprValu
 v_mfma_f32_16x16x16_f16 acc[236:239], v[vgprG2LA+12+0:vgprG2LA+12+0+1], v[vgprValuB_X0_I0+56+0+0:vgprValuB_X0_I0+56+0+0+1], acc[236:239] // left value = acc[236+0:239+0]
 /*  mfmaIndex:60  */
 /* localReadsVacancy: latencyLeft 2 */
+s_waitcnt lgkmcnt(0)                             // wait for prior local read local write
 v_mfma_f32_16x16x16_f16 acc[240:243], v[vgprG2LA+0+0:vgprG2LA+0+0+1], v[vgprValuB_X0_I0+60+0+0:vgprValuB_X0_I0+60+0+0+1], acc[240:243] // left value = acc[240+0:243+0]
 /*  mfmaIndex:61  */
 /* localReadsVacancy: latencyLeft 2 */
@@ -2425,21 +2441,7 @@ s_waitcnt vmcnt(4)                                 // global read wait for Direc
 /*  mfmaIndex:0  */
 ds_read_b128 v[vgprValuB_X0_I0+0:vgprValuB_X0_I0+0+3], v[vgprLocalReadAddrB] offset:0 // L -> Reg lro=0 swapByteOffset=0 ti=128 vIdx=0 eIdx=0 rIdx=0 oIdx=0 buffer=0 iui=0
 ds_read_b128 v[vgprValuB_X0_I0+4:vgprValuB_X0_I0+4+3], v[vgprLocalReadAddrB] offset:64 // L -> Reg lro=0 swapByteOffset=0 ti=128 vIdx=0 eIdx=1 rIdx=0 oIdx=0 buffer=0 iui=0
-ds_read_b128 v[vgprValuB_X0_I0+8:vgprValuB_X0_I0+8+3], v[vgprLocalReadAddrB] offset:128 // L -> Reg lro=0 swapByteOffset=0 ti=128 vIdx=0 eIdx=2 rIdx=0 oIdx=0 buffer=0 iui=0
-ds_read_b128 v[vgprValuB_X0_I0+12:vgprValuB_X0_I0+12+3], v[vgprLocalReadAddrB] offset:192 // L -> Reg lro=0 swapByteOffset=0 ti=128 vIdx=0 eIdx=3 rIdx=0 oIdx=0 buffer=0 iui=0
-ds_read_b128 v[vgprValuB_X0_I0+16:vgprValuB_X0_I0+16+3], v[vgprLocalReadAddrB] offset:256 // L -> Reg lro=0 swapByteOffset=0 ti=128 vIdx=0 eIdx=4 rIdx=0 oIdx=0 buffer=0 iui=0
-ds_read_b128 v[vgprValuB_X0_I0+20:vgprValuB_X0_I0+20+3], v[vgprLocalReadAddrB] offset:320 // L -> Reg lro=0 swapByteOffset=0 ti=128 vIdx=0 eIdx=5 rIdx=0 oIdx=0 buffer=0 iui=0
-ds_read_b128 v[vgprValuB_X0_I0+24:vgprValuB_X0_I0+24+3], v[vgprLocalReadAddrB] offset:384 // L -> Reg lro=0 swapByteOffset=0 ti=128 vIdx=0 eIdx=6 rIdx=0 oIdx=0 buffer=0 iui=0
-ds_read_b128 v[vgprValuB_X0_I0+28:vgprValuB_X0_I0+28+3], v[vgprLocalReadAddrB] offset:448 // L -> Reg lro=0 swapByteOffset=0 ti=128 vIdx=0 eIdx=7 rIdx=0 oIdx=0 buffer=0 iui=0
-ds_read_b128 v[vgprValuB_X0_I0+32:vgprValuB_X0_I0+32+3], v[vgprLocalReadAddrB] offset:8704 // L -> Reg lro=0 swapByteOffset=0 ti=128 vIdx=1 eIdx=0 rIdx=0 oIdx=0 buffer=0 iui=0
-ds_read_b128 v[vgprValuB_X0_I0+36:vgprValuB_X0_I0+36+3], v[vgprLocalReadAddrB] offset:8768 // L -> Reg lro=0 swapByteOffset=0 ti=128 vIdx=1 eIdx=1 rIdx=0 oIdx=0 buffer=0 iui=0
-ds_read_b128 v[vgprValuB_X0_I0+40:vgprValuB_X0_I0+40+3], v[vgprLocalReadAddrB] offset:8832 // L -> Reg lro=0 swapByteOffset=0 ti=128 vIdx=1 eIdx=2 rIdx=0 oIdx=0 buffer=0 iui=0
-ds_read_b128 v[vgprValuB_X0_I0+44:vgprValuB_X0_I0+44+3], v[vgprLocalReadAddrB] offset:8896 // L -> Reg lro=0 swapByteOffset=0 ti=128 vIdx=1 eIdx=3 rIdx=0 oIdx=0 buffer=0 iui=0
-ds_read_b128 v[vgprValuB_X0_I0+48:vgprValuB_X0_I0+48+3], v[vgprLocalReadAddrB] offset:8960 // L -> Reg lro=0 swapByteOffset=0 ti=128 vIdx=1 eIdx=4 rIdx=0 oIdx=0 buffer=0 iui=0
-ds_read_b128 v[vgprValuB_X0_I0+52:vgprValuB_X0_I0+52+3], v[vgprLocalReadAddrB] offset:9024 // L -> Reg lro=0 swapByteOffset=0 ti=128 vIdx=1 eIdx=5 rIdx=0 oIdx=0 buffer=0 iui=0
-ds_read_b128 v[vgprValuB_X0_I0+56:vgprValuB_X0_I0+56+3], v[vgprLocalReadAddrB] offset:9088 // L -> Reg lro=0 swapByteOffset=0 ti=128 vIdx=1 eIdx=6 rIdx=0 oIdx=0 buffer=0 iui=0
-ds_read_b128 v[vgprValuB_X0_I0+60:vgprValuB_X0_I0+60+3], v[vgprLocalReadAddrB] offset:9152 // L -> Reg lro=0 swapByteOffset=0 ti=128 vIdx=1 eIdx=7 rIdx=0 oIdx=0 buffer=0 iui=0
-s_waitcnt lgkmcnt(0)                               // wait for prior local read local write old=0, new=0 newLW=0 newLR=0 for iteration == 0
+s_waitcnt lgkmcnt(1)                               // wait for prior local read local write old=0, new=0 newLW=0 newLR=0 for iteration == 0
 v_mfma_f32_16x16x16_f16 acc[0:3], v[vgprG2LA+16+0:vgprG2LA+16+0+1], v[vgprValuB_X0_I0+0+0+0:vgprValuB_X0_I0+0+0+0+1], acc[0:3] // left value = acc[0+0:3+0]
 /*  mfmaIndex:1  */
 /* localReadsVacancy: latencyLeft 2 */
@@ -2458,7 +2460,8 @@ v_mfma_f32_16x16x16_f16 acc[12:15], v[vgprG2LA+28+0:vgprG2LA+28+0+1], v[vgprValu
 /*  mfmaIndex:4  */
 /* localReadsVacancy: latencyLeft 2 */
 s_add_u32 s[sgprSrdA+0], s[sgprSrdA+0], s28        // gra SRD += inc(lower)
-s_waitcnt lgkmcnt(15)                              // wait for prior local read local write
+ds_read_b128 v[vgprValuB_X0_I0+8:vgprValuB_X0_I0+8+3], v[vgprLocalReadAddrB] offset:128 // L -> Reg lro=0 swapByteOffset=0 ti=128 vIdx=0 eIdx=2 rIdx=0 oIdx=0 buffer=0 iui=0
+s_waitcnt lgkmcnt(1)                              // wait for prior local read local write
 v_mfma_f32_16x16x16_f16 acc[16:19], v[vgprG2LA+16+0:vgprG2LA+16+0+1], v[vgprValuB_X0_I0+4+0+0:vgprValuB_X0_I0+4+0+0+1], acc[16:19] // left value = acc[16+0:19+0]
 /*  mfmaIndex:5  */
 /* localReadsVacancy: latencyLeft 2 */
@@ -2475,6 +2478,8 @@ v_mfma_f32_16x16x16_f16 acc[28:31], v[vgprG2LA+28+0:vgprG2LA+28+0+1], v[vgprValu
 /*  mfmaIndex:8  */
 /* localReadsVacancy: latencyLeft 2 */
 s_cmp_eq_u32 s[sgprShadowLimitA+1], 0              // are we within 2^32?
+ds_read_b128 v[vgprValuB_X0_I0+12:vgprValuB_X0_I0+12+3], v[vgprLocalReadAddrB] offset:192 // L -> Reg lro=0 swapByteOffset=0 ti=128 vIdx=0 eIdx=3 rIdx=0 oIdx=0 buffer=0 iui=0
+s_waitcnt lgkmcnt(1)                              // wait for prior local read local write
 v_mfma_f32_16x16x16_f16 acc[32:35], v[vgprG2LA+16+0:vgprG2LA+16+0+1], v[vgprValuB_X0_I0+8+0+0:vgprValuB_X0_I0+8+0+0+1], acc[32:35] // left value = acc[32+0:35+0]
 /*  mfmaIndex:9  */
 /* localReadsVacancy: latencyLeft 2 */
@@ -2493,6 +2498,8 @@ v_mfma_f32_16x16x16_f16 acc[44:47], v[vgprG2LA+28+0:vgprG2LA+28+0+1], v[vgprValu
 /*  mfmaIndex:12  */
 /* localReadsVacancy: latencyLeft 2 */
 s_cselect_b32 s29, s[sgprWrapUB+1], 0              // incUpper <- ?
+ds_read_b128 v[vgprValuB_X0_I0+16:vgprValuB_X0_I0+16+3], v[vgprLocalReadAddrB] offset:256 // L -> Reg lro=0 swapByteOffset=0 ti=128 vIdx=0 eIdx=4 rIdx=0 oIdx=0 buffer=0 iui=0
+s_waitcnt lgkmcnt(1)                              // wait for prior local read local write
 v_mfma_f32_16x16x16_f16 acc[48:51], v[vgprG2LA+16+0:vgprG2LA+16+0+1], v[vgprValuB_X0_I0+12+0+0:vgprValuB_X0_I0+12+0+0+1], acc[48:51] // left value = acc[48+0:51+0]
 /*  mfmaIndex:13  */
 /* localReadsVacancy: latencyLeft 2 */
@@ -2509,6 +2516,8 @@ v_mfma_f32_16x16x16_f16 acc[60:63], v[vgprG2LA+28+0:vgprG2LA+28+0+1], v[vgprValu
 /*  mfmaIndex:16  */
 /* localReadsVacancy: latencyLeft 2 */
 s_subb_u32 s[sgprShadowLimitB+1], s[sgprShadowLimitB+1], s29 // limit -= inc)
+ds_read_b128 v[vgprValuB_X0_I0+20:vgprValuB_X0_I0+20+3], v[vgprLocalReadAddrB] offset:320 // L -> Reg lro=0 swapByteOffset=0 ti=128 vIdx=0 eIdx=5 rIdx=0 oIdx=0 buffer=0 iui=0
+s_waitcnt lgkmcnt(1)                              // wait for prior local read local write
 v_mfma_f32_16x16x16_f16 acc[64:67], v[vgprG2LA+16+0:vgprG2LA+16+0+1], v[vgprValuB_X0_I0+16+0+0:vgprValuB_X0_I0+16+0+0+1], acc[64:67] // left value = acc[64+0:67+0]
 /*  mfmaIndex:17  */
 /* localReadsVacancy: latencyLeft 2 */
@@ -2523,6 +2532,8 @@ v_mfma_f32_16x16x16_f16 acc[72:75], v[vgprG2LA+24+0:vgprG2LA+24+0+1], v[vgprValu
 v_mfma_f32_16x16x16_f16 acc[76:79], v[vgprG2LA+28+0:vgprG2LA+28+0+1], v[vgprValuB_X0_I0+16+0+0:vgprValuB_X0_I0+16+0+0+1], acc[76:79] // left value = acc[76+0:79+0]
 /*  mfmaIndex:20  */
 /* localReadsVacancy: latencyLeft 2 */
+ds_read_b128 v[vgprValuB_X0_I0+24:vgprValuB_X0_I0+24+3], v[vgprLocalReadAddrB] offset:384 // L -> Reg lro=0 swapByteOffset=0 ti=128 vIdx=0 eIdx=6 rIdx=0 oIdx=0 buffer=0 iui=0
+s_waitcnt lgkmcnt(1)                              // wait for prior local read local write
 v_mfma_f32_16x16x16_f16 acc[80:83], v[vgprG2LA+16+0:vgprG2LA+16+0+1], v[vgprValuB_X0_I0+20+0+0:vgprValuB_X0_I0+20+0+0+1], acc[80:83] // left value = acc[80+0:83+0]
 /*  mfmaIndex:21  */
 /* localReadsVacancy: latencyLeft 2 */
@@ -2535,6 +2546,8 @@ v_mfma_f32_16x16x16_f16 acc[88:91], v[vgprG2LA+24+0:vgprG2LA+24+0+1], v[vgprValu
 v_mfma_f32_16x16x16_f16 acc[92:95], v[vgprG2LA+28+0:vgprG2LA+28+0+1], v[vgprValuB_X0_I0+20+0+0:vgprValuB_X0_I0+20+0+0+1], acc[92:95] // left value = acc[92+0:95+0]
 /*  mfmaIndex:24  */
 /* localReadsVacancy: latencyLeft 2 */
+ds_read_b128 v[vgprValuB_X0_I0+28:vgprValuB_X0_I0+28+3], v[vgprLocalReadAddrB] offset:448 // L -> Reg lro=0 swapByteOffset=0 ti=128 vIdx=0 eIdx=7 rIdx=0 oIdx=0 buffer=0 iui=0
+s_waitcnt lgkmcnt(1)                              // wait for prior local read local write
 v_mfma_f32_16x16x16_f16 acc[96:99], v[vgprG2LA+16+0:vgprG2LA+16+0+1], v[vgprValuB_X0_I0+24+0+0:vgprValuB_X0_I0+24+0+0+1], acc[96:99] // left value = acc[96+0:99+0]
 /*  mfmaIndex:25  */
 /* localReadsVacancy: latencyLeft 2 */
@@ -2548,6 +2561,8 @@ buffer_load_dwordx4 v[vgprG2LA+0:vgprG2LA+0+3], v[vgprGlobalReadOffsetA+0], s[sg
 v_mfma_f32_16x16x16_f16 acc[108:111], v[vgprG2LA+28+0:vgprG2LA+28+0+1], v[vgprValuB_X0_I0+24+0+0:vgprValuB_X0_I0+24+0+0+1], acc[108:111] // left value = acc[108+0:111+0]
 /*  mfmaIndex:28  */
 /* localReadsVacancy: latencyLeft 2 */
+ds_read_b128 v[vgprValuB_X0_I0+32:vgprValuB_X0_I0+32+3], v[vgprLocalReadAddrB] offset:8704 // L -> Reg lro=0 swapByteOffset=0 ti=128 vIdx=1 eIdx=0 rIdx=0 oIdx=0 buffer=0 iui=0
+s_waitcnt lgkmcnt(1)                              // wait for prior local read local write
 v_mfma_f32_16x16x16_f16 acc[112:115], v[vgprG2LA+16+0:vgprG2LA+16+0+1], v[vgprValuB_X0_I0+28+0+0:vgprValuB_X0_I0+28+0+0+1], acc[112:115] // left value = acc[112+0:115+0]
 /*  mfmaIndex:29  */
 /* localReadsVacancy: latencyLeft 2 */
@@ -2560,6 +2575,8 @@ v_mfma_f32_16x16x16_f16 acc[120:123], v[vgprG2LA+24+0:vgprG2LA+24+0+1], v[vgprVa
 v_mfma_f32_16x16x16_f16 acc[124:127], v[vgprG2LA+28+0:vgprG2LA+28+0+1], v[vgprValuB_X0_I0+28+0+0:vgprValuB_X0_I0+28+0+0+1], acc[124:127] // left value = acc[124+0:127+0]
 /*  mfmaIndex:32  */
 /* localReadsVacancy: latencyLeft 2 */
+ds_read_b128 v[vgprValuB_X0_I0+36:vgprValuB_X0_I0+36+3], v[vgprLocalReadAddrB] offset:8768 // L -> Reg lro=0 swapByteOffset=0 ti=128 vIdx=1 eIdx=1 rIdx=0 oIdx=0 buffer=0 iui=0
+s_waitcnt lgkmcnt(1)                              // wait for prior local read local write
 v_mfma_f32_16x16x16_f16 acc[128:131], v[vgprG2LA+16+0:vgprG2LA+16+0+1], v[vgprValuB_X0_I0+32+0+0:vgprValuB_X0_I0+32+0+0+1], acc[128:131] // left value = acc[128+0:131+0]
 /*  mfmaIndex:33  */
 /* localReadsVacancy: latencyLeft 2 */
@@ -2572,6 +2589,8 @@ v_mfma_f32_16x16x16_f16 acc[136:139], v[vgprG2LA+24+0:vgprG2LA+24+0+1], v[vgprVa
 v_mfma_f32_16x16x16_f16 acc[140:143], v[vgprG2LA+28+0:vgprG2LA+28+0+1], v[vgprValuB_X0_I0+32+0+0:vgprValuB_X0_I0+32+0+0+1], acc[140:143] // left value = acc[140+0:143+0]
 /*  mfmaIndex:36  */
 /* localReadsVacancy: latencyLeft 2 */
+ds_read_b128 v[vgprValuB_X0_I0+40:vgprValuB_X0_I0+40+3], v[vgprLocalReadAddrB] offset:8832 // L -> Reg lro=0 swapByteOffset=0 ti=128 vIdx=1 eIdx=2 rIdx=0 oIdx=0 buffer=0 iui=0
+s_waitcnt lgkmcnt(1)                              // wait for prior local read local write
 v_mfma_f32_16x16x16_f16 acc[144:147], v[vgprG2LA+16+0:vgprG2LA+16+0+1], v[vgprValuB_X0_I0+36+0+0:vgprValuB_X0_I0+36+0+0+1], acc[144:147] // left value = acc[144+0:147+0]
 /*  mfmaIndex:37  */
 /* localReadsVacancy: latencyLeft 2 */
@@ -2584,6 +2603,8 @@ v_mfma_f32_16x16x16_f16 acc[152:155], v[vgprG2LA+24+0:vgprG2LA+24+0+1], v[vgprVa
 v_mfma_f32_16x16x16_f16 acc[156:159], v[vgprG2LA+28+0:vgprG2LA+28+0+1], v[vgprValuB_X0_I0+36+0+0:vgprValuB_X0_I0+36+0+0+1], acc[156:159] // left value = acc[156+0:159+0]
 /*  mfmaIndex:40  */
 /* localReadsVacancy: latencyLeft 2 */
+ds_read_b128 v[vgprValuB_X0_I0+44:vgprValuB_X0_I0+44+3], v[vgprLocalReadAddrB] offset:8896 // L -> Reg lro=0 swapByteOffset=0 ti=128 vIdx=1 eIdx=3 rIdx=0 oIdx=0 buffer=0 iui=0
+s_waitcnt lgkmcnt(1)                              // wait for prior local read local write
 v_mfma_f32_16x16x16_f16 acc[160:163], v[vgprG2LA+16+0:vgprG2LA+16+0+1], v[vgprValuB_X0_I0+40+0+0:vgprValuB_X0_I0+40+0+0+1], acc[160:163] // left value = acc[160+0:163+0]
 /*  mfmaIndex:41  */
 /* localReadsVacancy: latencyLeft 2 */
@@ -2597,6 +2618,8 @@ v_mfma_f32_16x16x16_f16 acc[168:171], v[vgprG2LA+24+0:vgprG2LA+24+0+1], v[vgprVa
 v_mfma_f32_16x16x16_f16 acc[172:175], v[vgprG2LA+28+0:vgprG2LA+28+0+1], v[vgprValuB_X0_I0+40+0+0:vgprValuB_X0_I0+40+0+0+1], acc[172:175] // left value = acc[172+0:175+0]
 /*  mfmaIndex:44  */
 /* localReadsVacancy: latencyLeft 2 */
+ds_read_b128 v[vgprValuB_X0_I0+48:vgprValuB_X0_I0+48+3], v[vgprLocalReadAddrB] offset:8960 // L -> Reg lro=0 swapByteOffset=0 ti=128 vIdx=1 eIdx=4 rIdx=0 oIdx=0 buffer=0 iui=0
+s_waitcnt lgkmcnt(1)                              // wait for prior local read local write
 v_mfma_f32_16x16x16_f16 acc[176:179], v[vgprG2LA+16+0:vgprG2LA+16+0+1], v[vgprValuB_X0_I0+44+0+0:vgprValuB_X0_I0+44+0+0+1], acc[176:179] // left value = acc[176+0:179+0]
 /*  mfmaIndex:45  */
 /* localReadsVacancy: latencyLeft 2 */
@@ -2609,6 +2632,8 @@ v_mfma_f32_16x16x16_f16 acc[184:187], v[vgprG2LA+24+0:vgprG2LA+24+0+1], v[vgprVa
 v_mfma_f32_16x16x16_f16 acc[188:191], v[vgprG2LA+28+0:vgprG2LA+28+0+1], v[vgprValuB_X0_I0+44+0+0:vgprValuB_X0_I0+44+0+0+1], acc[188:191] // left value = acc[188+0:191+0]
 /*  mfmaIndex:48  */
 /* localReadsVacancy: latencyLeft 2 */
+ds_read_b128 v[vgprValuB_X0_I0+52:vgprValuB_X0_I0+52+3], v[vgprLocalReadAddrB] offset:9024 // L -> Reg lro=0 swapByteOffset=0 ti=128 vIdx=1 eIdx=5 rIdx=0 oIdx=0 buffer=0 iui=0
+s_waitcnt lgkmcnt(1)                              // wait for prior local read local write
 v_mfma_f32_16x16x16_f16 acc[192:195], v[vgprG2LA+16+0:vgprG2LA+16+0+1], v[vgprValuB_X0_I0+48+0+0:vgprValuB_X0_I0+48+0+0+1], acc[192:195] // left value = acc[192+0:195+0]
 /*  mfmaIndex:49  */
 /* localReadsVacancy: latencyLeft 2 */
@@ -2621,6 +2646,8 @@ v_mfma_f32_16x16x16_f16 acc[200:203], v[vgprG2LA+24+0:vgprG2LA+24+0+1], v[vgprVa
 v_mfma_f32_16x16x16_f16 acc[204:207], v[vgprG2LA+28+0:vgprG2LA+28+0+1], v[vgprValuB_X0_I0+48+0+0:vgprValuB_X0_I0+48+0+0+1], acc[204:207] // left value = acc[204+0:207+0]
 /*  mfmaIndex:52  */
 /* localReadsVacancy: latencyLeft 2 */
+ds_read_b128 v[vgprValuB_X0_I0+56:vgprValuB_X0_I0+56+3], v[vgprLocalReadAddrB] offset:9088 // L -> Reg lro=0 swapByteOffset=0 ti=128 vIdx=1 eIdx=6 rIdx=0 oIdx=0 buffer=0 iui=0
+s_waitcnt lgkmcnt(1)                              // wait for prior local read local write
 v_mfma_f32_16x16x16_f16 acc[208:211], v[vgprG2LA+16+0:vgprG2LA+16+0+1], v[vgprValuB_X0_I0+52+0+0:vgprValuB_X0_I0+52+0+0+1], acc[208:211] // left value = acc[208+0:211+0]
 /*  mfmaIndex:53  */
 /* localReadsVacancy: latencyLeft 2 */
@@ -2634,6 +2661,8 @@ buffer_load_dwordx4 v[vgprG2LA+8:vgprG2LA+8+3], v[vgprGlobalReadOffsetA+2], s[sg
 v_mfma_f32_16x16x16_f16 acc[220:223], v[vgprG2LA+28+0:vgprG2LA+28+0+1], v[vgprValuB_X0_I0+52+0+0:vgprValuB_X0_I0+52+0+0+1], acc[220:223] // left value = acc[220+0:223+0]
 /*  mfmaIndex:56  */
 /* localReadsVacancy: latencyLeft 2 */
+ds_read_b128 v[vgprValuB_X0_I0+60:vgprValuB_X0_I0+60+3], v[vgprLocalReadAddrB] offset:9152 // L -> Reg lro=0 swapByteOffset=0 ti=128 vIdx=1 eIdx=7 rIdx=0 oIdx=0 buffer=0 iui=0
+s_waitcnt lgkmcnt(1)                              // wait for prior local read local write
 v_mfma_f32_16x16x16_f16 acc[224:227], v[vgprG2LA+16+0:vgprG2LA+16+0+1], v[vgprValuB_X0_I0+56+0+0:vgprValuB_X0_I0+56+0+0+1], acc[224:227] // left value = acc[224+0:227+0]
 /*  mfmaIndex:57  */
 /* localReadsVacancy: latencyLeft 2 */
@@ -2645,6 +2674,7 @@ v_mfma_f32_16x16x16_f16 acc[232:235], v[vgprG2LA+24+0:vgprG2LA+24+0+1], v[vgprVa
 /* localReadsVacancy: latencyLeft 2 */
 v_mfma_f32_16x16x16_f16 acc[236:239], v[vgprG2LA+28+0:vgprG2LA+28+0+1], v[vgprValuB_X0_I0+56+0+0:vgprValuB_X0_I0+56+0+0+1], acc[236:239] // left value = acc[236+0:239+0]
 /*  mfmaIndex:60  */
+s_waitcnt lgkmcnt(0)                              // wait for prior local read local write
 /* localReadsVacancy: latencyLeft 2 */
 v_mfma_f32_16x16x16_f16 acc[240:243], v[vgprG2LA+16+0:vgprG2LA+16+0+1], v[vgprValuB_X0_I0+60+0+0:vgprValuB_X0_I0+60+0+0+1], acc[240:243] // left value = acc[240+0:243+0]
 /*  mfmaIndex:61  */
@@ -2919,21 +2949,7 @@ s_waitcnt vmcnt(4)                                 // global read wait for Direc
 /*  mfmaIndex:0  */
 ds_read_b128 v[vgprValuB_X0_I0+0:vgprValuB_X0_I0+0+3], v[vgprLocalReadAddrB] offset:0 // L -> Reg lro=0 swapByteOffset=0 ti=128 vIdx=0 eIdx=0 rIdx=0 oIdx=0 buffer=0 iui=0
 ds_read_b128 v[vgprValuB_X0_I0+4:vgprValuB_X0_I0+4+3], v[vgprLocalReadAddrB] offset:64 // L -> Reg lro=0 swapByteOffset=0 ti=128 vIdx=0 eIdx=1 rIdx=0 oIdx=0 buffer=0 iui=0
-ds_read_b128 v[vgprValuB_X0_I0+8:vgprValuB_X0_I0+8+3], v[vgprLocalReadAddrB] offset:128 // L -> Reg lro=0 swapByteOffset=0 ti=128 vIdx=0 eIdx=2 rIdx=0 oIdx=0 buffer=0 iui=0
-ds_read_b128 v[vgprValuB_X0_I0+12:vgprValuB_X0_I0+12+3], v[vgprLocalReadAddrB] offset:192 // L -> Reg lro=0 swapByteOffset=0 ti=128 vIdx=0 eIdx=3 rIdx=0 oIdx=0 buffer=0 iui=0
-ds_read_b128 v[vgprValuB_X0_I0+16:vgprValuB_X0_I0+16+3], v[vgprLocalReadAddrB] offset:256 // L -> Reg lro=0 swapByteOffset=0 ti=128 vIdx=0 eIdx=4 rIdx=0 oIdx=0 buffer=0 iui=0
-ds_read_b128 v[vgprValuB_X0_I0+20:vgprValuB_X0_I0+20+3], v[vgprLocalReadAddrB] offset:320 // L -> Reg lro=0 swapByteOffset=0 ti=128 vIdx=0 eIdx=5 rIdx=0 oIdx=0 buffer=0 iui=0
-ds_read_b128 v[vgprValuB_X0_I0+24:vgprValuB_X0_I0+24+3], v[vgprLocalReadAddrB] offset:384 // L -> Reg lro=0 swapByteOffset=0 ti=128 vIdx=0 eIdx=6 rIdx=0 oIdx=0 buffer=0 iui=0
-ds_read_b128 v[vgprValuB_X0_I0+28:vgprValuB_X0_I0+28+3], v[vgprLocalReadAddrB] offset:448 // L -> Reg lro=0 swapByteOffset=0 ti=128 vIdx=0 eIdx=7 rIdx=0 oIdx=0 buffer=0 iui=0
-ds_read_b128 v[vgprValuB_X0_I0+32:vgprValuB_X0_I0+32+3], v[vgprLocalReadAddrB] offset:8704 // L -> Reg lro=0 swapByteOffset=0 ti=128 vIdx=1 eIdx=0 rIdx=0 oIdx=0 buffer=0 iui=0
-ds_read_b128 v[vgprValuB_X0_I0+36:vgprValuB_X0_I0+36+3], v[vgprLocalReadAddrB] offset:8768 // L -> Reg lro=0 swapByteOffset=0 ti=128 vIdx=1 eIdx=1 rIdx=0 oIdx=0 buffer=0 iui=0
-ds_read_b128 v[vgprValuB_X0_I0+40:vgprValuB_X0_I0+40+3], v[vgprLocalReadAddrB] offset:8832 // L -> Reg lro=0 swapByteOffset=0 ti=128 vIdx=1 eIdx=2 rIdx=0 oIdx=0 buffer=0 iui=0
-ds_read_b128 v[vgprValuB_X0_I0+44:vgprValuB_X0_I0+44+3], v[vgprLocalReadAddrB] offset:8896 // L -> Reg lro=0 swapByteOffset=0 ti=128 vIdx=1 eIdx=3 rIdx=0 oIdx=0 buffer=0 iui=0
-ds_read_b128 v[vgprValuB_X0_I0+48:vgprValuB_X0_I0+48+3], v[vgprLocalReadAddrB] offset:8960 // L -> Reg lro=0 swapByteOffset=0 ti=128 vIdx=1 eIdx=4 rIdx=0 oIdx=0 buffer=0 iui=0
-ds_read_b128 v[vgprValuB_X0_I0+52:vgprValuB_X0_I0+52+3], v[vgprLocalReadAddrB] offset:9024 // L -> Reg lro=0 swapByteOffset=0 ti=128 vIdx=1 eIdx=5 rIdx=0 oIdx=0 buffer=0 iui=0
-ds_read_b128 v[vgprValuB_X0_I0+56:vgprValuB_X0_I0+56+3], v[vgprLocalReadAddrB] offset:9088 // L -> Reg lro=0 swapByteOffset=0 ti=128 vIdx=1 eIdx=6 rIdx=0 oIdx=0 buffer=0 iui=0
-ds_read_b128 v[vgprValuB_X0_I0+60:vgprValuB_X0_I0+60+3], v[vgprLocalReadAddrB] offset:9152 // L -> Reg lro=0 swapByteOffset=0 ti=128 vIdx=1 eIdx=7 rIdx=0 oIdx=0 buffer=0 iui=0
-s_waitcnt lgkmcnt(0)                               // wait for prior local read local write old=0, new=0 newLW=0 newLR=0 for iteration == 0
+s_waitcnt lgkmcnt(1)                               // wait for prior local read local write old=0, new=0 newLW=0 newLR=0 for iteration == 0
 v_mfma_f32_16x16x16_f16 acc[0:3], v[vgprG2LA+0+0:vgprG2LA+0+0+1], v[vgprValuB_X0_I0+0+0+0:vgprValuB_X0_I0+0+0+0+1], acc[0:3] // left value = acc[0+0:3+0]
 /*  mfmaIndex:1  */
 /* localReadsVacancy: latencyLeft 2 */
@@ -2952,7 +2968,8 @@ v_mfma_f32_16x16x16_f16 acc[12:15], v[vgprG2LA+12+0:vgprG2LA+12+0+1], v[vgprValu
 /*  mfmaIndex:4  */
 /* localReadsVacancy: latencyLeft 2 */
 s_add_u32 s[sgprSrdA+0], s[sgprSrdA+0], s28        // gra SRD += inc(lower)
-s_waitcnt lgkmcnt(15)                              // wait for prior local read local write
+ds_read_b128 v[vgprValuB_X0_I0+8:vgprValuB_X0_I0+8+3], v[vgprLocalReadAddrB] offset:128 // L -> Reg lro=0 swapByteOffset=0 ti=128 vIdx=0 eIdx=2 rIdx=0 oIdx=0 buffer=0 iui=0
+s_waitcnt lgkmcnt(1)                              // wait for prior local read local write
 v_mfma_f32_16x16x16_f16 acc[16:19], v[vgprG2LA+0+0:vgprG2LA+0+0+1], v[vgprValuB_X0_I0+4+0+0:vgprValuB_X0_I0+4+0+0+1], acc[16:19] // left value = acc[16+0:19+0]
 /*  mfmaIndex:5  */
 /* localReadsVacancy: latencyLeft 2 */
@@ -2969,6 +2986,8 @@ v_mfma_f32_16x16x16_f16 acc[28:31], v[vgprG2LA+12+0:vgprG2LA+12+0+1], v[vgprValu
 /*  mfmaIndex:8  */
 /* localReadsVacancy: latencyLeft 2 */
 s_cmp_eq_u32 s[sgprShadowLimitA+1], 0              // are we within 2^32?
+ds_read_b128 v[vgprValuB_X0_I0+12:vgprValuB_X0_I0+12+3], v[vgprLocalReadAddrB] offset:192 // L -> Reg lro=0 swapByteOffset=0 ti=128 vIdx=0 eIdx=3 rIdx=0 oIdx=0 buffer=0 iui=0
+s_waitcnt lgkmcnt(1)                              // wait for prior local read local write
 v_mfma_f32_16x16x16_f16 acc[32:35], v[vgprG2LA+0+0:vgprG2LA+0+0+1], v[vgprValuB_X0_I0+8+0+0:vgprValuB_X0_I0+8+0+0+1], acc[32:35] // left value = acc[32+0:35+0]
 /*  mfmaIndex:9  */
 /* localReadsVacancy: latencyLeft 2 */
@@ -2987,6 +3006,8 @@ v_mfma_f32_16x16x16_f16 acc[44:47], v[vgprG2LA+12+0:vgprG2LA+12+0+1], v[vgprValu
 /*  mfmaIndex:12  */
 /* localReadsVacancy: latencyLeft 2 */
 s_cselect_b32 s29, s[sgprWrapUB+1], 0              // incUpper <- ?
+ds_read_b128 v[vgprValuB_X0_I0+16:vgprValuB_X0_I0+16+3], v[vgprLocalReadAddrB] offset:256 // L -> Reg lro=0 swapByteOffset=0 ti=128 vIdx=0 eIdx=4 rIdx=0 oIdx=0 buffer=0 iui=0
+s_waitcnt lgkmcnt(1)                              // wait for prior local read local write
 v_mfma_f32_16x16x16_f16 acc[48:51], v[vgprG2LA+0+0:vgprG2LA+0+0+1], v[vgprValuB_X0_I0+12+0+0:vgprValuB_X0_I0+12+0+0+1], acc[48:51] // left value = acc[48+0:51+0]
 /*  mfmaIndex:13  */
 /* localReadsVacancy: latencyLeft 2 */
@@ -3003,6 +3024,8 @@ v_mfma_f32_16x16x16_f16 acc[60:63], v[vgprG2LA+12+0:vgprG2LA+12+0+1], v[vgprValu
 /*  mfmaIndex:16  */
 /* localReadsVacancy: latencyLeft 2 */
 s_subb_u32 s[sgprShadowLimitB+1], s[sgprShadowLimitB+1], s29 // limit -= inc)
+ds_read_b128 v[vgprValuB_X0_I0+20:vgprValuB_X0_I0+20+3], v[vgprLocalReadAddrB] offset:320 // L -> Reg lro=0 swapByteOffset=0 ti=128 vIdx=0 eIdx=5 rIdx=0 oIdx=0 buffer=0 iui=0
+s_waitcnt lgkmcnt(1)                              // wait for prior local read local write
 v_mfma_f32_16x16x16_f16 acc[64:67], v[vgprG2LA+0+0:vgprG2LA+0+0+1], v[vgprValuB_X0_I0+16+0+0:vgprValuB_X0_I0+16+0+0+1], acc[64:67] // left value = acc[64+0:67+0]
 /*  mfmaIndex:17  */
 /* localReadsVacancy: latencyLeft 2 */
@@ -3017,6 +3040,8 @@ v_mfma_f32_16x16x16_f16 acc[72:75], v[vgprG2LA+8+0:vgprG2LA+8+0+1], v[vgprValuB_
 v_mfma_f32_16x16x16_f16 acc[76:79], v[vgprG2LA+12+0:vgprG2LA+12+0+1], v[vgprValuB_X0_I0+16+0+0:vgprValuB_X0_I0+16+0+0+1], acc[76:79] // left value = acc[76+0:79+0]
 /*  mfmaIndex:20  */
 /* localReadsVacancy: latencyLeft 2 */
+ds_read_b128 v[vgprValuB_X0_I0+24:vgprValuB_X0_I0+24+3], v[vgprLocalReadAddrB] offset:384 // L -> Reg lro=0 swapByteOffset=0 ti=128 vIdx=0 eIdx=6 rIdx=0 oIdx=0 buffer=0 iui=0
+s_waitcnt lgkmcnt(1)                              // wait for prior local read local write
 v_mfma_f32_16x16x16_f16 acc[80:83], v[vgprG2LA+0+0:vgprG2LA+0+0+1], v[vgprValuB_X0_I0+20+0+0:vgprValuB_X0_I0+20+0+0+1], acc[80:83] // left value = acc[80+0:83+0]
 /*  mfmaIndex:21  */
 /* localReadsVacancy: latencyLeft 2 */
@@ -3029,6 +3054,8 @@ v_mfma_f32_16x16x16_f16 acc[88:91], v[vgprG2LA+8+0:vgprG2LA+8+0+1], v[vgprValuB_
 v_mfma_f32_16x16x16_f16 acc[92:95], v[vgprG2LA+12+0:vgprG2LA+12+0+1], v[vgprValuB_X0_I0+20+0+0:vgprValuB_X0_I0+20+0+0+1], acc[92:95] // left value = acc[92+0:95+0]
 /*  mfmaIndex:24  */
 /* localReadsVacancy: latencyLeft 2 */
+ds_read_b128 v[vgprValuB_X0_I0+28:vgprValuB_X0_I0+28+3], v[vgprLocalReadAddrB] offset:448 // L -> Reg lro=0 swapByteOffset=0 ti=128 vIdx=0 eIdx=7 rIdx=0 oIdx=0 buffer=0 iui=0
+s_waitcnt lgkmcnt(1)                              // wait for prior local read local write
 v_mfma_f32_16x16x16_f16 acc[96:99], v[vgprG2LA+0+0:vgprG2LA+0+0+1], v[vgprValuB_X0_I0+24+0+0:vgprValuB_X0_I0+24+0+0+1], acc[96:99] // left value = acc[96+0:99+0]
 /*  mfmaIndex:25  */
 /* localReadsVacancy: latencyLeft 2 */
@@ -3042,6 +3069,8 @@ buffer_load_dwordx4 v[vgprG2LA2+0:vgprG2LA2+0+3], v[vgprGlobalReadOffsetA+0], s[
 v_mfma_f32_16x16x16_f16 acc[108:111], v[vgprG2LA+12+0:vgprG2LA+12+0+1], v[vgprValuB_X0_I0+24+0+0:vgprValuB_X0_I0+24+0+0+1], acc[108:111] // left value = acc[108+0:111+0]
 /*  mfmaIndex:28  */
 /* localReadsVacancy: latencyLeft 2 */
+ds_read_b128 v[vgprValuB_X0_I0+32:vgprValuB_X0_I0+32+3], v[vgprLocalReadAddrB] offset:8704 // L -> Reg lro=0 swapByteOffset=0 ti=128 vIdx=1 eIdx=0 rIdx=0 oIdx=0 buffer=0 iui=0
+s_waitcnt lgkmcnt(1)                              // wait for prior local read local write
 v_mfma_f32_16x16x16_f16 acc[112:115], v[vgprG2LA+0+0:vgprG2LA+0+0+1], v[vgprValuB_X0_I0+28+0+0:vgprValuB_X0_I0+28+0+0+1], acc[112:115] // left value = acc[112+0:115+0]
 /*  mfmaIndex:29  */
 /* localReadsVacancy: latencyLeft 2 */
@@ -3054,6 +3083,8 @@ v_mfma_f32_16x16x16_f16 acc[120:123], v[vgprG2LA+8+0:vgprG2LA+8+0+1], v[vgprValu
 v_mfma_f32_16x16x16_f16 acc[124:127], v[vgprG2LA+12+0:vgprG2LA+12+0+1], v[vgprValuB_X0_I0+28+0+0:vgprValuB_X0_I0+28+0+0+1], acc[124:127] // left value = acc[124+0:127+0]
 /*  mfmaIndex:32  */
 /* localReadsVacancy: latencyLeft 2 */
+ds_read_b128 v[vgprValuB_X0_I0+36:vgprValuB_X0_I0+36+3], v[vgprLocalReadAddrB] offset:8768 // L -> Reg lro=0 swapByteOffset=0 ti=128 vIdx=1 eIdx=1 rIdx=0 oIdx=0 buffer=0 iui=0
+s_waitcnt lgkmcnt(1)                              // wait for prior local read local write
 v_mfma_f32_16x16x16_f16 acc[128:131], v[vgprG2LA+0+0:vgprG2LA+0+0+1], v[vgprValuB_X0_I0+32+0+0:vgprValuB_X0_I0+32+0+0+1], acc[128:131] // left value = acc[128+0:131+0]
 /*  mfmaIndex:33  */
 /* localReadsVacancy: latencyLeft 2 */
@@ -3066,6 +3097,8 @@ v_mfma_f32_16x16x16_f16 acc[136:139], v[vgprG2LA+8+0:vgprG2LA+8+0+1], v[vgprValu
 v_mfma_f32_16x16x16_f16 acc[140:143], v[vgprG2LA+12+0:vgprG2LA+12+0+1], v[vgprValuB_X0_I0+32+0+0:vgprValuB_X0_I0+32+0+0+1], acc[140:143] // left value = acc[140+0:143+0]
 /*  mfmaIndex:36  */
 /* localReadsVacancy: latencyLeft 2 */
+ds_read_b128 v[vgprValuB_X0_I0+40:vgprValuB_X0_I0+40+3], v[vgprLocalReadAddrB] offset:8832 // L -> Reg lro=0 swapByteOffset=0 ti=128 vIdx=1 eIdx=2 rIdx=0 oIdx=0 buffer=0 iui=0
+s_waitcnt lgkmcnt(1)                              // wait for prior local read local write
 v_mfma_f32_16x16x16_f16 acc[144:147], v[vgprG2LA+0+0:vgprG2LA+0+0+1], v[vgprValuB_X0_I0+36+0+0:vgprValuB_X0_I0+36+0+0+1], acc[144:147] // left value = acc[144+0:147+0]
 /*  mfmaIndex:37  */
 /* localReadsVacancy: latencyLeft 2 */
@@ -3078,6 +3111,8 @@ v_mfma_f32_16x16x16_f16 acc[152:155], v[vgprG2LA+8+0:vgprG2LA+8+0+1], v[vgprValu
 v_mfma_f32_16x16x16_f16 acc[156:159], v[vgprG2LA+12+0:vgprG2LA+12+0+1], v[vgprValuB_X0_I0+36+0+0:vgprValuB_X0_I0+36+0+0+1], acc[156:159] // left value = acc[156+0:159+0]
 /*  mfmaIndex:40  */
 /* localReadsVacancy: latencyLeft 2 */
+ds_read_b128 v[vgprValuB_X0_I0+44:vgprValuB_X0_I0+44+3], v[vgprLocalReadAddrB] offset:8896 // L -> Reg lro=0 swapByteOffset=0 ti=128 vIdx=1 eIdx=3 rIdx=0 oIdx=0 buffer=0 iui=0
+s_waitcnt lgkmcnt(1)                              // wait for prior local read local write
 v_mfma_f32_16x16x16_f16 acc[160:163], v[vgprG2LA+0+0:vgprG2LA+0+0+1], v[vgprValuB_X0_I0+40+0+0:vgprValuB_X0_I0+40+0+0+1], acc[160:163] // left value = acc[160+0:163+0]
 /*  mfmaIndex:41  */
 /* localReadsVacancy: latencyLeft 2 */
@@ -3091,6 +3126,8 @@ v_mfma_f32_16x16x16_f16 acc[168:171], v[vgprG2LA+8+0:vgprG2LA+8+0+1], v[vgprValu
 v_mfma_f32_16x16x16_f16 acc[172:175], v[vgprG2LA+12+0:vgprG2LA+12+0+1], v[vgprValuB_X0_I0+40+0+0:vgprValuB_X0_I0+40+0+0+1], acc[172:175] // left value = acc[172+0:175+0]
 /*  mfmaIndex:44  */
 /* localReadsVacancy: latencyLeft 2 */
+ds_read_b128 v[vgprValuB_X0_I0+48:vgprValuB_X0_I0+48+3], v[vgprLocalReadAddrB] offset:8960 // L -> Reg lro=0 swapByteOffset=0 ti=128 vIdx=1 eIdx=4 rIdx=0 oIdx=0 buffer=0 iui=0
+s_waitcnt lgkmcnt(1)                              // wait for prior local read local write
 v_mfma_f32_16x16x16_f16 acc[176:179], v[vgprG2LA+0+0:vgprG2LA+0+0+1], v[vgprValuB_X0_I0+44+0+0:vgprValuB_X0_I0+44+0+0+1], acc[176:179] // left value = acc[176+0:179+0]
 /*  mfmaIndex:45  */
 /* localReadsVacancy: latencyLeft 2 */
@@ -3103,6 +3140,8 @@ v_mfma_f32_16x16x16_f16 acc[184:187], v[vgprG2LA+8+0:vgprG2LA+8+0+1], v[vgprValu
 v_mfma_f32_16x16x16_f16 acc[188:191], v[vgprG2LA+12+0:vgprG2LA+12+0+1], v[vgprValuB_X0_I0+44+0+0:vgprValuB_X0_I0+44+0+0+1], acc[188:191] // left value = acc[188+0:191+0]
 /*  mfmaIndex:48  */
 /* localReadsVacancy: latencyLeft 2 */
+ds_read_b128 v[vgprValuB_X0_I0+52:vgprValuB_X0_I0+52+3], v[vgprLocalReadAddrB] offset:9024 // L -> Reg lro=0 swapByteOffset=0 ti=128 vIdx=1 eIdx=5 rIdx=0 oIdx=0 buffer=0 iui=0
+s_waitcnt lgkmcnt(1)                              // wait for prior local read local write
 v_mfma_f32_16x16x16_f16 acc[192:195], v[vgprG2LA+0+0:vgprG2LA+0+0+1], v[vgprValuB_X0_I0+48+0+0:vgprValuB_X0_I0+48+0+0+1], acc[192:195] // left value = acc[192+0:195+0]
 /*  mfmaIndex:49  */
 /* localReadsVacancy: latencyLeft 2 */
@@ -3115,6 +3154,8 @@ v_mfma_f32_16x16x16_f16 acc[200:203], v[vgprG2LA+8+0:vgprG2LA+8+0+1], v[vgprValu
 v_mfma_f32_16x16x16_f16 acc[204:207], v[vgprG2LA+12+0:vgprG2LA+12+0+1], v[vgprValuB_X0_I0+48+0+0:vgprValuB_X0_I0+48+0+0+1], acc[204:207] // left value = acc[204+0:207+0]
 /*  mfmaIndex:52  */
 /* localReadsVacancy: latencyLeft 2 */
+ds_read_b128 v[vgprValuB_X0_I0+56:vgprValuB_X0_I0+56+3], v[vgprLocalReadAddrB] offset:9088 // L -> Reg lro=0 swapByteOffset=0 ti=128 vIdx=1 eIdx=6 rIdx=0 oIdx=0 buffer=0 iui=0
+s_waitcnt lgkmcnt(1)                              // wait for prior local read local write
 v_mfma_f32_16x16x16_f16 acc[208:211], v[vgprG2LA+0+0:vgprG2LA+0+0+1], v[vgprValuB_X0_I0+52+0+0:vgprValuB_X0_I0+52+0+0+1], acc[208:211] // left value = acc[208+0:211+0]
 /*  mfmaIndex:53  */
 /* localReadsVacancy: latencyLeft 2 */
@@ -3128,6 +3169,8 @@ buffer_load_dwordx4 v[vgprG2LA2+8:vgprG2LA2+8+3], v[vgprGlobalReadOffsetA+2], s[
 v_mfma_f32_16x16x16_f16 acc[220:223], v[vgprG2LA+12+0:vgprG2LA+12+0+1], v[vgprValuB_X0_I0+52+0+0:vgprValuB_X0_I0+52+0+0+1], acc[220:223] // left value = acc[220+0:223+0]
 /*  mfmaIndex:56  */
 /* localReadsVacancy: latencyLeft 2 */
+ds_read_b128 v[vgprValuB_X0_I0+60:vgprValuB_X0_I0+60+3], v[vgprLocalReadAddrB] offset:9152 // L -> Reg lro=0 swapByteOffset=0 ti=128 vIdx=1 eIdx=7 rIdx=0 oIdx=0 buffer=0 iui=0
+s_waitcnt lgkmcnt(1)                              // wait for prior local read local write
 v_mfma_f32_16x16x16_f16 acc[224:227], v[vgprG2LA+0+0:vgprG2LA+0+0+1], v[vgprValuB_X0_I0+56+0+0:vgprValuB_X0_I0+56+0+0+1], acc[224:227] // left value = acc[224+0:227+0]
 /*  mfmaIndex:57  */
 /* localReadsVacancy: latencyLeft 2 */
@@ -3140,6 +3183,7 @@ v_mfma_f32_16x16x16_f16 acc[232:235], v[vgprG2LA+8+0:vgprG2LA+8+0+1], v[vgprValu
 v_mfma_f32_16x16x16_f16 acc[236:239], v[vgprG2LA+12+0:vgprG2LA+12+0+1], v[vgprValuB_X0_I0+56+0+0:vgprValuB_X0_I0+56+0+0+1], acc[236:239] // left value = acc[236+0:239+0]
 /*  mfmaIndex:60  */
 /* localReadsVacancy: latencyLeft 2 */
+s_waitcnt lgkmcnt(0)                              // wait for prior local read local write
 v_mfma_f32_16x16x16_f16 acc[240:243], v[vgprG2LA+0+0:vgprG2LA+0+0+1], v[vgprValuB_X0_I0+60+0+0:vgprValuB_X0_I0+60+0+0+1], acc[240:243] // left value = acc[240+0:243+0]
 /*  mfmaIndex:61  */
 /* localReadsVacancy: latencyLeft 2 */
@@ -3159,7 +3203,6 @@ v_mfma_f32_16x16x16_f16 acc[252:255], v[vgprG2LA+12+0:vgprG2LA+12+0+1], v[vgprVa
 /*  numMfmaForLR:30, syncPlrMfmaIndex:0  */
 /*  mfmaIndex:64  */
 /* localReadsVacancy: latencyLeft 2 */
-s_waitcnt lgkmcnt(0)                               // wait for prior local read local write old=0, new=0 newLW=0 newLR=0
 v_mfma_f32_16x16x16_f16 acc[0:3], v[vgprG2LA+0+2:vgprG2LA+0+2+1], v[vgprValuB_X0_I0+0+2+0:vgprValuB_X0_I0+0+2+0+1], acc[0:3] // left value = acc[0+0:3+0]
 /*  mfmaIndex:65  */
 /* localReadsVacancy: latencyLeft 2 */
@@ -3400,21 +3443,7 @@ s_waitcnt vmcnt(4)                                 // global read wait for Direc
 /*  mfmaIndex:0  */
 ds_read_b128 v[vgprValuB_X0_I0+0:vgprValuB_X0_I0+0+3], v[vgprLocalReadAddrB] offset:0 // L -> Reg lro=0 swapByteOffset=0 ti=128 vIdx=0 eIdx=0 rIdx=0 oIdx=0 buffer=0 iui=0
 ds_read_b128 v[vgprValuB_X0_I0+4:vgprValuB_X0_I0+4+3], v[vgprLocalReadAddrB] offset:64 // L -> Reg lro=0 swapByteOffset=0 ti=128 vIdx=0 eIdx=1 rIdx=0 oIdx=0 buffer=0 iui=0
-ds_read_b128 v[vgprValuB_X0_I0+8:vgprValuB_X0_I0+8+3], v[vgprLocalReadAddrB] offset:128 // L -> Reg lro=0 swapByteOffset=0 ti=128 vIdx=0 eIdx=2 rIdx=0 oIdx=0 buffer=0 iui=0
-ds_read_b128 v[vgprValuB_X0_I0+12:vgprValuB_X0_I0+12+3], v[vgprLocalReadAddrB] offset:192 // L -> Reg lro=0 swapByteOffset=0 ti=128 vIdx=0 eIdx=3 rIdx=0 oIdx=0 buffer=0 iui=0
-ds_read_b128 v[vgprValuB_X0_I0+16:vgprValuB_X0_I0+16+3], v[vgprLocalReadAddrB] offset:256 // L -> Reg lro=0 swapByteOffset=0 ti=128 vIdx=0 eIdx=4 rIdx=0 oIdx=0 buffer=0 iui=0
-ds_read_b128 v[vgprValuB_X0_I0+20:vgprValuB_X0_I0+20+3], v[vgprLocalReadAddrB] offset:320 // L -> Reg lro=0 swapByteOffset=0 ti=128 vIdx=0 eIdx=5 rIdx=0 oIdx=0 buffer=0 iui=0
-ds_read_b128 v[vgprValuB_X0_I0+24:vgprValuB_X0_I0+24+3], v[vgprLocalReadAddrB] offset:384 // L -> Reg lro=0 swapByteOffset=0 ti=128 vIdx=0 eIdx=6 rIdx=0 oIdx=0 buffer=0 iui=0
-ds_read_b128 v[vgprValuB_X0_I0+28:vgprValuB_X0_I0+28+3], v[vgprLocalReadAddrB] offset:448 // L -> Reg lro=0 swapByteOffset=0 ti=128 vIdx=0 eIdx=7 rIdx=0 oIdx=0 buffer=0 iui=0
-ds_read_b128 v[vgprValuB_X0_I0+32:vgprValuB_X0_I0+32+3], v[vgprLocalReadAddrB] offset:8704 // L -> Reg lro=0 swapByteOffset=0 ti=128 vIdx=1 eIdx=0 rIdx=0 oIdx=0 buffer=0 iui=0
-ds_read_b128 v[vgprValuB_X0_I0+36:vgprValuB_X0_I0+36+3], v[vgprLocalReadAddrB] offset:8768 // L -> Reg lro=0 swapByteOffset=0 ti=128 vIdx=1 eIdx=1 rIdx=0 oIdx=0 buffer=0 iui=0
-ds_read_b128 v[vgprValuB_X0_I0+40:vgprValuB_X0_I0+40+3], v[vgprLocalReadAddrB] offset:8832 // L -> Reg lro=0 swapByteOffset=0 ti=128 vIdx=1 eIdx=2 rIdx=0 oIdx=0 buffer=0 iui=0
-ds_read_b128 v[vgprValuB_X0_I0+44:vgprValuB_X0_I0+44+3], v[vgprLocalReadAddrB] offset:8896 // L -> Reg lro=0 swapByteOffset=0 ti=128 vIdx=1 eIdx=3 rIdx=0 oIdx=0 buffer=0 iui=0
-ds_read_b128 v[vgprValuB_X0_I0+48:vgprValuB_X0_I0+48+3], v[vgprLocalReadAddrB] offset:8960 // L -> Reg lro=0 swapByteOffset=0 ti=128 vIdx=1 eIdx=4 rIdx=0 oIdx=0 buffer=0 iui=0
-ds_read_b128 v[vgprValuB_X0_I0+52:vgprValuB_X0_I0+52+3], v[vgprLocalReadAddrB] offset:9024 // L -> Reg lro=0 swapByteOffset=0 ti=128 vIdx=1 eIdx=5 rIdx=0 oIdx=0 buffer=0 iui=0
-ds_read_b128 v[vgprValuB_X0_I0+56:vgprValuB_X0_I0+56+3], v[vgprLocalReadAddrB] offset:9088 // L -> Reg lro=0 swapByteOffset=0 ti=128 vIdx=1 eIdx=6 rIdx=0 oIdx=0 buffer=0 iui=0
-ds_read_b128 v[vgprValuB_X0_I0+60:vgprValuB_X0_I0+60+3], v[vgprLocalReadAddrB] offset:9152 // L -> Reg lro=0 swapByteOffset=0 ti=128 vIdx=1 eIdx=7 rIdx=0 oIdx=0 buffer=0 iui=0
-s_waitcnt lgkmcnt(0)                               // wait for prior local read local write old=0, new=0 newLW=0 newLR=0 for iteration == 0
+s_waitcnt lgkmcnt(1)                               // wait for prior local read local write old=0, new=0 newLW=0 newLR=0 for iteration == 0
 v_mfma_f32_16x16x16_f16 acc[0:3], v[vgprG2LA+16+0:vgprG2LA+16+0+1], v[vgprValuB_X0_I0+0+0+0:vgprValuB_X0_I0+0+0+0+1], acc[0:3] // left value = acc[0+0:3+0]
 /*  mfmaIndex:1  */
 /* localReadsVacancy: latencyLeft 2 */
@@ -3433,7 +3462,8 @@ v_mfma_f32_16x16x16_f16 acc[12:15], v[vgprG2LA+28+0:vgprG2LA+28+0+1], v[vgprValu
 /*  mfmaIndex:4  */
 /* localReadsVacancy: latencyLeft 2 */
 s_add_u32 s[sgprSrdA+0], s[sgprSrdA+0], s28        // gra SRD += inc(lower)
-s_waitcnt lgkmcnt(15)                              // wait for prior local read local write
+ds_read_b128 v[vgprValuB_X0_I0+8:vgprValuB_X0_I0+8+3], v[vgprLocalReadAddrB] offset:128 // L -> Reg lro=0 swapByteOffset=0 ti=128 vIdx=0 eIdx=2 rIdx=0 oIdx=0 buffer=0 iui=0
+s_waitcnt lgkmcnt(1)                               // wait for prior local read local write old=0, new=0 newLW=0 newLR=0 for iteration == 0
 v_mfma_f32_16x16x16_f16 acc[16:19], v[vgprG2LA+16+0:vgprG2LA+16+0+1], v[vgprValuB_X0_I0+4+0+0:vgprValuB_X0_I0+4+0+0+1], acc[16:19] // left value = acc[16+0:19+0]
 /*  mfmaIndex:5  */
 /* localReadsVacancy: latencyLeft 2 */
@@ -3450,6 +3480,8 @@ v_mfma_f32_16x16x16_f16 acc[28:31], v[vgprG2LA+28+0:vgprG2LA+28+0+1], v[vgprValu
 /*  mfmaIndex:8  */
 /* localReadsVacancy: latencyLeft 2 */
 s_cmp_eq_u32 s[sgprShadowLimitA+1], 0              // are we within 2^32?
+ds_read_b128 v[vgprValuB_X0_I0+12:vgprValuB_X0_I0+12+3], v[vgprLocalReadAddrB] offset:192 // L -> Reg lro=0 swapByteOffset=0 ti=128 vIdx=0 eIdx=3 rIdx=0 oIdx=0 buffer=0 iui=0
+s_waitcnt lgkmcnt(1)                               // wait for prior local read local write old=0, new=0 newLW=0 newLR=0 for iteration == 0
 v_mfma_f32_16x16x16_f16 acc[32:35], v[vgprG2LA+16+0:vgprG2LA+16+0+1], v[vgprValuB_X0_I0+8+0+0:vgprValuB_X0_I0+8+0+0+1], acc[32:35] // left value = acc[32+0:35+0]
 /*  mfmaIndex:9  */
 /* localReadsVacancy: latencyLeft 2 */
@@ -3468,6 +3500,8 @@ v_mfma_f32_16x16x16_f16 acc[44:47], v[vgprG2LA+28+0:vgprG2LA+28+0+1], v[vgprValu
 /*  mfmaIndex:12  */
 /* localReadsVacancy: latencyLeft 2 */
 s_cselect_b32 s29, s[sgprWrapUB+1], 0              // incUpper <- ?
+ds_read_b128 v[vgprValuB_X0_I0+16:vgprValuB_X0_I0+16+3], v[vgprLocalReadAddrB] offset:256 // L -> Reg lro=0 swapByteOffset=0 ti=128 vIdx=0 eIdx=4 rIdx=0 oIdx=0 buffer=0 iui=0
+s_waitcnt lgkmcnt(1)                               // wait for prior local read local write old=0, new=0 newLW=0 newLR=0 for iteration == 0
 v_mfma_f32_16x16x16_f16 acc[48:51], v[vgprG2LA+16+0:vgprG2LA+16+0+1], v[vgprValuB_X0_I0+12+0+0:vgprValuB_X0_I0+12+0+0+1], acc[48:51] // left value = acc[48+0:51+0]
 /*  mfmaIndex:13  */
 /* localReadsVacancy: latencyLeft 2 */
@@ -3484,6 +3518,8 @@ v_mfma_f32_16x16x16_f16 acc[60:63], v[vgprG2LA+28+0:vgprG2LA+28+0+1], v[vgprValu
 /*  mfmaIndex:16  */
 /* localReadsVacancy: latencyLeft 2 */
 s_subb_u32 s[sgprShadowLimitB+1], s[sgprShadowLimitB+1], s29 // limit -= inc)
+ds_read_b128 v[vgprValuB_X0_I0+20:vgprValuB_X0_I0+20+3], v[vgprLocalReadAddrB] offset:320 // L -> Reg lro=0 swapByteOffset=0 ti=128 vIdx=0 eIdx=5 rIdx=0 oIdx=0 buffer=0 iui=0
+s_waitcnt lgkmcnt(1)                               // wait for prior local read local write old=0, new=0 newLW=0 newLR=0 for iteration == 0
 v_mfma_f32_16x16x16_f16 acc[64:67], v[vgprG2LA+16+0:vgprG2LA+16+0+1], v[vgprValuB_X0_I0+16+0+0:vgprValuB_X0_I0+16+0+0+1], acc[64:67] // left value = acc[64+0:67+0]
 /*  mfmaIndex:17  */
 /* localReadsVacancy: latencyLeft 2 */
@@ -3498,6 +3534,8 @@ v_mfma_f32_16x16x16_f16 acc[72:75], v[vgprG2LA+24+0:vgprG2LA+24+0+1], v[vgprValu
 v_mfma_f32_16x16x16_f16 acc[76:79], v[vgprG2LA+28+0:vgprG2LA+28+0+1], v[vgprValuB_X0_I0+16+0+0:vgprValuB_X0_I0+16+0+0+1], acc[76:79] // left value = acc[76+0:79+0]
 /*  mfmaIndex:20  */
 /* localReadsVacancy: latencyLeft 2 */
+ds_read_b128 v[vgprValuB_X0_I0+24:vgprValuB_X0_I0+24+3], v[vgprLocalReadAddrB] offset:384 // L -> Reg lro=0 swapByteOffset=0 ti=128 vIdx=0 eIdx=6 rIdx=0 oIdx=0 buffer=0 iui=0
+s_waitcnt lgkmcnt(1)                               // wait for prior local read local write old=0, new=0 newLW=0 newLR=0 for iteration == 0
 v_mfma_f32_16x16x16_f16 acc[80:83], v[vgprG2LA+16+0:vgprG2LA+16+0+1], v[vgprValuB_X0_I0+20+0+0:vgprValuB_X0_I0+20+0+0+1], acc[80:83] // left value = acc[80+0:83+0]
 /*  mfmaIndex:21  */
 /* localReadsVacancy: latencyLeft 2 */
@@ -3510,6 +3548,8 @@ v_mfma_f32_16x16x16_f16 acc[88:91], v[vgprG2LA+24+0:vgprG2LA+24+0+1], v[vgprValu
 v_mfma_f32_16x16x16_f16 acc[92:95], v[vgprG2LA+28+0:vgprG2LA+28+0+1], v[vgprValuB_X0_I0+20+0+0:vgprValuB_X0_I0+20+0+0+1], acc[92:95] // left value = acc[92+0:95+0]
 /*  mfmaIndex:24  */
 /* localReadsVacancy: latencyLeft 2 */
+ds_read_b128 v[vgprValuB_X0_I0+28:vgprValuB_X0_I0+28+3], v[vgprLocalReadAddrB] offset:448 // L -> Reg lro=0 swapByteOffset=0 ti=128 vIdx=0 eIdx=7 rIdx=0 oIdx=0 buffer=0 iui=0
+s_waitcnt lgkmcnt(1)                               // wait for prior local read local write old=0, new=0 newLW=0 newLR=0 for iteration == 0
 v_mfma_f32_16x16x16_f16 acc[96:99], v[vgprG2LA+16+0:vgprG2LA+16+0+1], v[vgprValuB_X0_I0+24+0+0:vgprValuB_X0_I0+24+0+0+1], acc[96:99] // left value = acc[96+0:99+0]
 /*  mfmaIndex:25  */
 /* localReadsVacancy: latencyLeft 2 */
@@ -3523,6 +3563,8 @@ buffer_load_dwordx4 v[vgprG2LA+0:vgprG2LA+0+3], v[vgprGlobalReadOffsetA+0], s[sg
 v_mfma_f32_16x16x16_f16 acc[108:111], v[vgprG2LA+28+0:vgprG2LA+28+0+1], v[vgprValuB_X0_I0+24+0+0:vgprValuB_X0_I0+24+0+0+1], acc[108:111] // left value = acc[108+0:111+0]
 /*  mfmaIndex:28  */
 /* localReadsVacancy: latencyLeft 2 */
+ds_read_b128 v[vgprValuB_X0_I0+32:vgprValuB_X0_I0+32+3], v[vgprLocalReadAddrB] offset:8704 // L -> Reg lro=0 swapByteOffset=0 ti=128 vIdx=1 eIdx=0 rIdx=0 oIdx=0 buffer=0 iui=0
+s_waitcnt lgkmcnt(1)                               // wait for prior local read local write old=0, new=0 newLW=0 newLR=0 for iteration == 0
 v_mfma_f32_16x16x16_f16 acc[112:115], v[vgprG2LA+16+0:vgprG2LA+16+0+1], v[vgprValuB_X0_I0+28+0+0:vgprValuB_X0_I0+28+0+0+1], acc[112:115] // left value = acc[112+0:115+0]
 /*  mfmaIndex:29  */
 /* localReadsVacancy: latencyLeft 2 */
@@ -3535,6 +3577,8 @@ v_mfma_f32_16x16x16_f16 acc[120:123], v[vgprG2LA+24+0:vgprG2LA+24+0+1], v[vgprVa
 v_mfma_f32_16x16x16_f16 acc[124:127], v[vgprG2LA+28+0:vgprG2LA+28+0+1], v[vgprValuB_X0_I0+28+0+0:vgprValuB_X0_I0+28+0+0+1], acc[124:127] // left value = acc[124+0:127+0]
 /*  mfmaIndex:32  */
 /* localReadsVacancy: latencyLeft 2 */
+ds_read_b128 v[vgprValuB_X0_I0+36:vgprValuB_X0_I0+36+3], v[vgprLocalReadAddrB] offset:8768 // L -> Reg lro=0 swapByteOffset=0 ti=128 vIdx=1 eIdx=1 rIdx=0 oIdx=0 buffer=0 iui=0
+s_waitcnt lgkmcnt(1)                               // wait for prior local read local write old=0, new=0 newLW=0 newLR=0 for iteration == 0
 v_mfma_f32_16x16x16_f16 acc[128:131], v[vgprG2LA+16+0:vgprG2LA+16+0+1], v[vgprValuB_X0_I0+32+0+0:vgprValuB_X0_I0+32+0+0+1], acc[128:131] // left value = acc[128+0:131+0]
 /*  mfmaIndex:33  */
 /* localReadsVacancy: latencyLeft 2 */
@@ -3547,6 +3591,8 @@ v_mfma_f32_16x16x16_f16 acc[136:139], v[vgprG2LA+24+0:vgprG2LA+24+0+1], v[vgprVa
 v_mfma_f32_16x16x16_f16 acc[140:143], v[vgprG2LA+28+0:vgprG2LA+28+0+1], v[vgprValuB_X0_I0+32+0+0:vgprValuB_X0_I0+32+0+0+1], acc[140:143] // left value = acc[140+0:143+0]
 /*  mfmaIndex:36  */
 /* localReadsVacancy: latencyLeft 2 */
+ds_read_b128 v[vgprValuB_X0_I0+40:vgprValuB_X0_I0+40+3], v[vgprLocalReadAddrB] offset:8832 // L -> Reg lro=0 swapByteOffset=0 ti=128 vIdx=1 eIdx=2 rIdx=0 oIdx=0 buffer=0 iui=0
+s_waitcnt lgkmcnt(1)                               // wait for prior local read local write old=0, new=0 newLW=0 newLR=0 for iteration == 0
 v_mfma_f32_16x16x16_f16 acc[144:147], v[vgprG2LA+16+0:vgprG2LA+16+0+1], v[vgprValuB_X0_I0+36+0+0:vgprValuB_X0_I0+36+0+0+1], acc[144:147] // left value = acc[144+0:147+0]
 /*  mfmaIndex:37  */
 /* localReadsVacancy: latencyLeft 2 */
@@ -3559,6 +3605,8 @@ v_mfma_f32_16x16x16_f16 acc[152:155], v[vgprG2LA+24+0:vgprG2LA+24+0+1], v[vgprVa
 v_mfma_f32_16x16x16_f16 acc[156:159], v[vgprG2LA+28+0:vgprG2LA+28+0+1], v[vgprValuB_X0_I0+36+0+0:vgprValuB_X0_I0+36+0+0+1], acc[156:159] // left value = acc[156+0:159+0]
 /*  mfmaIndex:40  */
 /* localReadsVacancy: latencyLeft 2 */
+ds_read_b128 v[vgprValuB_X0_I0+44:vgprValuB_X0_I0+44+3], v[vgprLocalReadAddrB] offset:8896 // L -> Reg lro=0 swapByteOffset=0 ti=128 vIdx=1 eIdx=3 rIdx=0 oIdx=0 buffer=0 iui=0
+s_waitcnt lgkmcnt(1)                               // wait for prior local read local write old=0, new=0 newLW=0 newLR=0 for iteration == 0
 v_mfma_f32_16x16x16_f16 acc[160:163], v[vgprG2LA+16+0:vgprG2LA+16+0+1], v[vgprValuB_X0_I0+40+0+0:vgprValuB_X0_I0+40+0+0+1], acc[160:163] // left value = acc[160+0:163+0]
 /*  mfmaIndex:41  */
 /* localReadsVacancy: latencyLeft 2 */
@@ -3572,6 +3620,8 @@ v_mfma_f32_16x16x16_f16 acc[168:171], v[vgprG2LA+24+0:vgprG2LA+24+0+1], v[vgprVa
 v_mfma_f32_16x16x16_f16 acc[172:175], v[vgprG2LA+28+0:vgprG2LA+28+0+1], v[vgprValuB_X0_I0+40+0+0:vgprValuB_X0_I0+40+0+0+1], acc[172:175] // left value = acc[172+0:175+0]
 /*  mfmaIndex:44  */
 /* localReadsVacancy: latencyLeft 2 */
+ds_read_b128 v[vgprValuB_X0_I0+48:vgprValuB_X0_I0+48+3], v[vgprLocalReadAddrB] offset:8960 // L -> Reg lro=0 swapByteOffset=0 ti=128 vIdx=1 eIdx=4 rIdx=0 oIdx=0 buffer=0 iui=0
+s_waitcnt lgkmcnt(1)                               // wait for prior local read local write old=0, new=0 newLW=0 newLR=0 for iteration == 0
 v_mfma_f32_16x16x16_f16 acc[176:179], v[vgprG2LA+16+0:vgprG2LA+16+0+1], v[vgprValuB_X0_I0+44+0+0:vgprValuB_X0_I0+44+0+0+1], acc[176:179] // left value = acc[176+0:179+0]
 /*  mfmaIndex:45  */
 /* localReadsVacancy: latencyLeft 2 */
@@ -3584,6 +3634,8 @@ v_mfma_f32_16x16x16_f16 acc[184:187], v[vgprG2LA+24+0:vgprG2LA+24+0+1], v[vgprVa
 v_mfma_f32_16x16x16_f16 acc[188:191], v[vgprG2LA+28+0:vgprG2LA+28+0+1], v[vgprValuB_X0_I0+44+0+0:vgprValuB_X0_I0+44+0+0+1], acc[188:191] // left value = acc[188+0:191+0]
 /*  mfmaIndex:48  */
 /* localReadsVacancy: latencyLeft 2 */
+ds_read_b128 v[vgprValuB_X0_I0+52:vgprValuB_X0_I0+52+3], v[vgprLocalReadAddrB] offset:9024 // L -> Reg lro=0 swapByteOffset=0 ti=128 vIdx=1 eIdx=5 rIdx=0 oIdx=0 buffer=0 iui=0
+s_waitcnt lgkmcnt(1)                               // wait for prior local read local write old=0, new=0 newLW=0 newLR=0 for iteration == 0
 v_mfma_f32_16x16x16_f16 acc[192:195], v[vgprG2LA+16+0:vgprG2LA+16+0+1], v[vgprValuB_X0_I0+48+0+0:vgprValuB_X0_I0+48+0+0+1], acc[192:195] // left value = acc[192+0:195+0]
 /*  mfmaIndex:49  */
 /* localReadsVacancy: latencyLeft 2 */
@@ -3596,6 +3648,8 @@ v_mfma_f32_16x16x16_f16 acc[200:203], v[vgprG2LA+24+0:vgprG2LA+24+0+1], v[vgprVa
 v_mfma_f32_16x16x16_f16 acc[204:207], v[vgprG2LA+28+0:vgprG2LA+28+0+1], v[vgprValuB_X0_I0+48+0+0:vgprValuB_X0_I0+48+0+0+1], acc[204:207] // left value = acc[204+0:207+0]
 /*  mfmaIndex:52  */
 /* localReadsVacancy: latencyLeft 2 */
+ds_read_b128 v[vgprValuB_X0_I0+56:vgprValuB_X0_I0+56+3], v[vgprLocalReadAddrB] offset:9088 // L -> Reg lro=0 swapByteOffset=0 ti=128 vIdx=1 eIdx=6 rIdx=0 oIdx=0 buffer=0 iui=0
+s_waitcnt lgkmcnt(1)                               // wait for prior local read local write old=0, new=0 newLW=0 newLR=0 for iteration == 0
 v_mfma_f32_16x16x16_f16 acc[208:211], v[vgprG2LA+16+0:vgprG2LA+16+0+1], v[vgprValuB_X0_I0+52+0+0:vgprValuB_X0_I0+52+0+0+1], acc[208:211] // left value = acc[208+0:211+0]
 /*  mfmaIndex:53  */
 /* localReadsVacancy: latencyLeft 2 */
@@ -3609,6 +3663,8 @@ buffer_load_dwordx4 v[vgprG2LA+8:vgprG2LA+8+3], v[vgprGlobalReadOffsetA+2], s[sg
 v_mfma_f32_16x16x16_f16 acc[220:223], v[vgprG2LA+28+0:vgprG2LA+28+0+1], v[vgprValuB_X0_I0+52+0+0:vgprValuB_X0_I0+52+0+0+1], acc[220:223] // left value = acc[220+0:223+0]
 /*  mfmaIndex:56  */
 /* localReadsVacancy: latencyLeft 2 */
+ds_read_b128 v[vgprValuB_X0_I0+60:vgprValuB_X0_I0+60+3], v[vgprLocalReadAddrB] offset:9152 // L -> Reg lro=0 swapByteOffset=0 ti=128 vIdx=1 eIdx=7 rIdx=0 oIdx=0 buffer=0 iui=0
+s_waitcnt lgkmcnt(1)                               // wait for prior local read local write old=0, new=0 newLW=0 newLR=0 for iteration == 0
 v_mfma_f32_16x16x16_f16 acc[224:227], v[vgprG2LA+16+0:vgprG2LA+16+0+1], v[vgprValuB_X0_I0+56+0+0:vgprValuB_X0_I0+56+0+0+1], acc[224:227] // left value = acc[224+0:227+0]
 /*  mfmaIndex:57  */
 /* localReadsVacancy: latencyLeft 2 */
@@ -3621,6 +3677,7 @@ v_mfma_f32_16x16x16_f16 acc[232:235], v[vgprG2LA+24+0:vgprG2LA+24+0+1], v[vgprVa
 v_mfma_f32_16x16x16_f16 acc[236:239], v[vgprG2LA+28+0:vgprG2LA+28+0+1], v[vgprValuB_X0_I0+56+0+0:vgprValuB_X0_I0+56+0+0+1], acc[236:239] // left value = acc[236+0:239+0]
 /*  mfmaIndex:60  */
 /* localReadsVacancy: latencyLeft 2 */
+s_waitcnt lgkmcnt(0)                               // wait for prior local read local write old=0, new=0 newLW=0 newLR=0 for iteration == 0
 v_mfma_f32_16x16x16_f16 acc[240:243], v[vgprG2LA+16+0:vgprG2LA+16+0+1], v[vgprValuB_X0_I0+60+0+0:vgprValuB_X0_I0+60+0+0+1], acc[240:243] // left value = acc[240+0:243+0]
 /*  mfmaIndex:61  */
 /* localReadsVacancy: latencyLeft 2 */
@@ -3907,21 +3964,7 @@ s_waitcnt vmcnt(0)                                 // global read wait for Direc
 /*  mfmaIndex:0  */
 ds_read_b128 v[vgprValuB_X0_I0+0:vgprValuB_X0_I0+0+3], v[vgprLocalReadAddrB] offset:0 // L -> Reg lro=0 swapByteOffset=0 ti=128 vIdx=0 eIdx=0 rIdx=0 oIdx=0 buffer=0 iui=0
 ds_read_b128 v[vgprValuB_X0_I0+4:vgprValuB_X0_I0+4+3], v[vgprLocalReadAddrB] offset:64 // L -> Reg lro=0 swapByteOffset=0 ti=128 vIdx=0 eIdx=1 rIdx=0 oIdx=0 buffer=0 iui=0
-ds_read_b128 v[vgprValuB_X0_I0+8:vgprValuB_X0_I0+8+3], v[vgprLocalReadAddrB] offset:128 // L -> Reg lro=0 swapByteOffset=0 ti=128 vIdx=0 eIdx=2 rIdx=0 oIdx=0 buffer=0 iui=0
-ds_read_b128 v[vgprValuB_X0_I0+12:vgprValuB_X0_I0+12+3], v[vgprLocalReadAddrB] offset:192 // L -> Reg lro=0 swapByteOffset=0 ti=128 vIdx=0 eIdx=3 rIdx=0 oIdx=0 buffer=0 iui=0
-ds_read_b128 v[vgprValuB_X0_I0+16:vgprValuB_X0_I0+16+3], v[vgprLocalReadAddrB] offset:256 // L -> Reg lro=0 swapByteOffset=0 ti=128 vIdx=0 eIdx=4 rIdx=0 oIdx=0 buffer=0 iui=0
-ds_read_b128 v[vgprValuB_X0_I0+20:vgprValuB_X0_I0+20+3], v[vgprLocalReadAddrB] offset:320 // L -> Reg lro=0 swapByteOffset=0 ti=128 vIdx=0 eIdx=5 rIdx=0 oIdx=0 buffer=0 iui=0
-ds_read_b128 v[vgprValuB_X0_I0+24:vgprValuB_X0_I0+24+3], v[vgprLocalReadAddrB] offset:384 // L -> Reg lro=0 swapByteOffset=0 ti=128 vIdx=0 eIdx=6 rIdx=0 oIdx=0 buffer=0 iui=0
-ds_read_b128 v[vgprValuB_X0_I0+28:vgprValuB_X0_I0+28+3], v[vgprLocalReadAddrB] offset:448 // L -> Reg lro=0 swapByteOffset=0 ti=128 vIdx=0 eIdx=7 rIdx=0 oIdx=0 buffer=0 iui=0
-ds_read_b128 v[vgprValuB_X0_I0+32:vgprValuB_X0_I0+32+3], v[vgprLocalReadAddrB] offset:8704 // L -> Reg lro=0 swapByteOffset=0 ti=128 vIdx=1 eIdx=0 rIdx=0 oIdx=0 buffer=0 iui=0
-ds_read_b128 v[vgprValuB_X0_I0+36:vgprValuB_X0_I0+36+3], v[vgprLocalReadAddrB] offset:8768 // L -> Reg lro=0 swapByteOffset=0 ti=128 vIdx=1 eIdx=1 rIdx=0 oIdx=0 buffer=0 iui=0
-ds_read_b128 v[vgprValuB_X0_I0+40:vgprValuB_X0_I0+40+3], v[vgprLocalReadAddrB] offset:8832 // L -> Reg lro=0 swapByteOffset=0 ti=128 vIdx=1 eIdx=2 rIdx=0 oIdx=0 buffer=0 iui=0
-ds_read_b128 v[vgprValuB_X0_I0+44:vgprValuB_X0_I0+44+3], v[vgprLocalReadAddrB] offset:8896 // L -> Reg lro=0 swapByteOffset=0 ti=128 vIdx=1 eIdx=3 rIdx=0 oIdx=0 buffer=0 iui=0
-ds_read_b128 v[vgprValuB_X0_I0+48:vgprValuB_X0_I0+48+3], v[vgprLocalReadAddrB] offset:8960 // L -> Reg lro=0 swapByteOffset=0 ti=128 vIdx=1 eIdx=4 rIdx=0 oIdx=0 buffer=0 iui=0
-ds_read_b128 v[vgprValuB_X0_I0+52:vgprValuB_X0_I0+52+3], v[vgprLocalReadAddrB] offset:9024 // L -> Reg lro=0 swapByteOffset=0 ti=128 vIdx=1 eIdx=5 rIdx=0 oIdx=0 buffer=0 iui=0
-ds_read_b128 v[vgprValuB_X0_I0+56:vgprValuB_X0_I0+56+3], v[vgprLocalReadAddrB] offset:9088 // L -> Reg lro=0 swapByteOffset=0 ti=128 vIdx=1 eIdx=6 rIdx=0 oIdx=0 buffer=0 iui=0
-ds_read_b128 v[vgprValuB_X0_I0+60:vgprValuB_X0_I0+60+3], v[vgprLocalReadAddrB] offset:9152 // L -> Reg lro=0 swapByteOffset=0 ti=128 vIdx=1 eIdx=7 rIdx=0 oIdx=0 buffer=0 iui=0
-s_waitcnt lgkmcnt(0)                               // wait for prior local read local write old=0, new=0 newLW=0 newLR=0 for iteration == 0
+s_waitcnt lgkmcnt(1)                               // wait for prior local read local write old=0, new=0 newLW=0 newLR=0 for iteration == 0
 v_mfma_f32_16x16x16_f16 acc[0:3], v[vgprG2LA+16+0:vgprG2LA+16+0+1], v[vgprValuB_X0_I0+0+0+0:vgprValuB_X0_I0+0+0+0+1], acc[0:3] // left value = acc[0+0:3+0]
 /*  mfmaIndex:1  */
 /* localReadsVacancy: latencyLeft 2 */
@@ -3940,7 +3983,8 @@ v_mfma_f32_16x16x16_f16 acc[12:15], v[vgprG2LA+28+0:vgprG2LA+28+0+1], v[vgprValu
 /*  mfmaIndex:4  */
 /* localReadsVacancy: latencyLeft 2 */
 s_add_u32 s[sgprSrdA+0], s[sgprSrdA+0], s28        // gra SRD += inc(lower)
-s_waitcnt lgkmcnt(15)                              // wait for prior local read local write
+ds_read_b128 v[vgprValuB_X0_I0+8:vgprValuB_X0_I0+8+3], v[vgprLocalReadAddrB] offset:128 // L -> Reg lro=0 swapByteOffset=0 ti=128 vIdx=0 eIdx=2 rIdx=0 oIdx=0 buffer=0 iui=0
+s_waitcnt lgkmcnt(1)                               // wait for prior local read local write old=0, new=0 newLW=0 newLR=0 for iteration == 0
 v_mfma_f32_16x16x16_f16 acc[16:19], v[vgprG2LA+16+0:vgprG2LA+16+0+1], v[vgprValuB_X0_I0+4+0+0:vgprValuB_X0_I0+4+0+0+1], acc[16:19] // left value = acc[16+0:19+0]
 /*  mfmaIndex:5  */
 /* localReadsVacancy: latencyLeft 2 */
@@ -3957,6 +4001,8 @@ v_mfma_f32_16x16x16_f16 acc[28:31], v[vgprG2LA+28+0:vgprG2LA+28+0+1], v[vgprValu
 /*  mfmaIndex:8  */
 /* localReadsVacancy: latencyLeft 2 */
 s_cmp_eq_u32 s[sgprShadowLimitA+1], 0              // are we within 2^32?
+ds_read_b128 v[vgprValuB_X0_I0+12:vgprValuB_X0_I0+12+3], v[vgprLocalReadAddrB] offset:192 // L -> Reg lro=0 swapByteOffset=0 ti=128 vIdx=0 eIdx=3 rIdx=0 oIdx=0 buffer=0 iui=0
+s_waitcnt lgkmcnt(1)                               // wait for prior local read local write old=0, new=0 newLW=0 newLR=0 for iteration == 0
 v_mfma_f32_16x16x16_f16 acc[32:35], v[vgprG2LA+16+0:vgprG2LA+16+0+1], v[vgprValuB_X0_I0+8+0+0:vgprValuB_X0_I0+8+0+0+1], acc[32:35] // left value = acc[32+0:35+0]
 /*  mfmaIndex:9  */
 /* localReadsVacancy: latencyLeft 2 */
@@ -3970,6 +4016,8 @@ v_mfma_f32_16x16x16_f16 acc[40:43], v[vgprG2LA+24+0:vgprG2LA+24+0+1], v[vgprValu
 v_mfma_f32_16x16x16_f16 acc[44:47], v[vgprG2LA+28+0:vgprG2LA+28+0+1], v[vgprValuB_X0_I0+8+0+0:vgprValuB_X0_I0+8+0+0+1], acc[44:47] // left value = acc[44+0:47+0]
 /*  mfmaIndex:12  */
 /* localReadsVacancy: latencyLeft 2 */
+ds_read_b128 v[vgprValuB_X0_I0+16:vgprValuB_X0_I0+16+3], v[vgprLocalReadAddrB] offset:256 // L -> Reg lro=0 swapByteOffset=0 ti=128 vIdx=0 eIdx=4 rIdx=0 oIdx=0 buffer=0 iui=0
+s_waitcnt lgkmcnt(1)                               // wait for prior local read local write old=0, new=0 newLW=0 newLR=0 for iteration == 0
 v_mfma_f32_16x16x16_f16 acc[48:51], v[vgprG2LA+16+0:vgprG2LA+16+0+1], v[vgprValuB_X0_I0+12+0+0:vgprValuB_X0_I0+12+0+0+1], acc[48:51] // left value = acc[48+0:51+0]
 /*  mfmaIndex:13  */
 /* localReadsVacancy: latencyLeft 2 */
@@ -3982,6 +4030,8 @@ v_mfma_f32_16x16x16_f16 acc[56:59], v[vgprG2LA+24+0:vgprG2LA+24+0+1], v[vgprValu
 v_mfma_f32_16x16x16_f16 acc[60:63], v[vgprG2LA+28+0:vgprG2LA+28+0+1], v[vgprValuB_X0_I0+12+0+0:vgprValuB_X0_I0+12+0+0+1], acc[60:63] // left value = acc[60+0:63+0]
 /*  mfmaIndex:16  */
 /* localReadsVacancy: latencyLeft 2 */
+ds_read_b128 v[vgprValuB_X0_I0+20:vgprValuB_X0_I0+20+3], v[vgprLocalReadAddrB] offset:320 // L -> Reg lro=0 swapByteOffset=0 ti=128 vIdx=0 eIdx=5 rIdx=0 oIdx=0 buffer=0 iui=0
+s_waitcnt lgkmcnt(1)                               // wait for prior local read local write old=0, new=0 newLW=0 newLR=0 for iteration == 0
 v_mfma_f32_16x16x16_f16 acc[64:67], v[vgprG2LA+16+0:vgprG2LA+16+0+1], v[vgprValuB_X0_I0+16+0+0:vgprValuB_X0_I0+16+0+0+1], acc[64:67] // left value = acc[64+0:67+0]
 /*  mfmaIndex:17  */
 /* localReadsVacancy: latencyLeft 2 */
@@ -3994,6 +4044,8 @@ v_mfma_f32_16x16x16_f16 acc[72:75], v[vgprG2LA+24+0:vgprG2LA+24+0+1], v[vgprValu
 v_mfma_f32_16x16x16_f16 acc[76:79], v[vgprG2LA+28+0:vgprG2LA+28+0+1], v[vgprValuB_X0_I0+16+0+0:vgprValuB_X0_I0+16+0+0+1], acc[76:79] // left value = acc[76+0:79+0]
 /*  mfmaIndex:20  */
 /* localReadsVacancy: latencyLeft 2 */
+ds_read_b128 v[vgprValuB_X0_I0+24:vgprValuB_X0_I0+24+3], v[vgprLocalReadAddrB] offset:384 // L -> Reg lro=0 swapByteOffset=0 ti=128 vIdx=0 eIdx=6 rIdx=0 oIdx=0 buffer=0 iui=0
+s_waitcnt lgkmcnt(1)                               // wait for prior local read local write old=0, new=0 newLW=0 newLR=0 for iteration == 0
 v_mfma_f32_16x16x16_f16 acc[80:83], v[vgprG2LA+16+0:vgprG2LA+16+0+1], v[vgprValuB_X0_I0+20+0+0:vgprValuB_X0_I0+20+0+0+1], acc[80:83] // left value = acc[80+0:83+0]
 /*  mfmaIndex:21  */
 /* localReadsVacancy: latencyLeft 2 */
@@ -4006,6 +4058,8 @@ v_mfma_f32_16x16x16_f16 acc[88:91], v[vgprG2LA+24+0:vgprG2LA+24+0+1], v[vgprValu
 v_mfma_f32_16x16x16_f16 acc[92:95], v[vgprG2LA+28+0:vgprG2LA+28+0+1], v[vgprValuB_X0_I0+20+0+0:vgprValuB_X0_I0+20+0+0+1], acc[92:95] // left value = acc[92+0:95+0]
 /*  mfmaIndex:24  */
 /* localReadsVacancy: latencyLeft 2 */
+ds_read_b128 v[vgprValuB_X0_I0+28:vgprValuB_X0_I0+28+3], v[vgprLocalReadAddrB] offset:448 // L -> Reg lro=0 swapByteOffset=0 ti=128 vIdx=0 eIdx=7 rIdx=0 oIdx=0 buffer=0 iui=0
+s_waitcnt lgkmcnt(1)                               // wait for prior local read local write old=0, new=0 newLW=0 newLR=0 for iteration == 0
 v_mfma_f32_16x16x16_f16 acc[96:99], v[vgprG2LA+16+0:vgprG2LA+16+0+1], v[vgprValuB_X0_I0+24+0+0:vgprValuB_X0_I0+24+0+0+1], acc[96:99] // left value = acc[96+0:99+0]
 /*  mfmaIndex:25  */
 /* localReadsVacancy: latencyLeft 2 */
@@ -4018,6 +4072,8 @@ v_mfma_f32_16x16x16_f16 acc[104:107], v[vgprG2LA+24+0:vgprG2LA+24+0+1], v[vgprVa
 v_mfma_f32_16x16x16_f16 acc[108:111], v[vgprG2LA+28+0:vgprG2LA+28+0+1], v[vgprValuB_X0_I0+24+0+0:vgprValuB_X0_I0+24+0+0+1], acc[108:111] // left value = acc[108+0:111+0]
 /*  mfmaIndex:28  */
 /* localReadsVacancy: latencyLeft 2 */
+ds_read_b128 v[vgprValuB_X0_I0+32:vgprValuB_X0_I0+32+3], v[vgprLocalReadAddrB] offset:8704 // L -> Reg lro=0 swapByteOffset=0 ti=128 vIdx=1 eIdx=0 rIdx=0 oIdx=0 buffer=0 iui=0
+s_waitcnt lgkmcnt(1)                               // wait for prior local read local write old=0, new=0 newLW=0 newLR=0 for iteration == 0
 v_mfma_f32_16x16x16_f16 acc[112:115], v[vgprG2LA+16+0:vgprG2LA+16+0+1], v[vgprValuB_X0_I0+28+0+0:vgprValuB_X0_I0+28+0+0+1], acc[112:115] // left value = acc[112+0:115+0]
 /*  mfmaIndex:29  */
 /* localReadsVacancy: latencyLeft 2 */
@@ -4030,6 +4086,8 @@ v_mfma_f32_16x16x16_f16 acc[120:123], v[vgprG2LA+24+0:vgprG2LA+24+0+1], v[vgprVa
 v_mfma_f32_16x16x16_f16 acc[124:127], v[vgprG2LA+28+0:vgprG2LA+28+0+1], v[vgprValuB_X0_I0+28+0+0:vgprValuB_X0_I0+28+0+0+1], acc[124:127] // left value = acc[124+0:127+0]
 /*  mfmaIndex:32  */
 /* localReadsVacancy: latencyLeft 2 */
+ds_read_b128 v[vgprValuB_X0_I0+36:vgprValuB_X0_I0+36+3], v[vgprLocalReadAddrB] offset:8768 // L -> Reg lro=0 swapByteOffset=0 ti=128 vIdx=1 eIdx=1 rIdx=0 oIdx=0 buffer=0 iui=0
+s_waitcnt lgkmcnt(1)                               // wait for prior local read local write old=0, new=0 newLW=0 newLR=0 for iteration == 0
 v_mfma_f32_16x16x16_f16 acc[128:131], v[vgprG2LA+16+0:vgprG2LA+16+0+1], v[vgprValuB_X0_I0+32+0+0:vgprValuB_X0_I0+32+0+0+1], acc[128:131] // left value = acc[128+0:131+0]
 /*  mfmaIndex:33  */
 /* localReadsVacancy: latencyLeft 2 */
@@ -4042,6 +4100,8 @@ v_mfma_f32_16x16x16_f16 acc[136:139], v[vgprG2LA+24+0:vgprG2LA+24+0+1], v[vgprVa
 v_mfma_f32_16x16x16_f16 acc[140:143], v[vgprG2LA+28+0:vgprG2LA+28+0+1], v[vgprValuB_X0_I0+32+0+0:vgprValuB_X0_I0+32+0+0+1], acc[140:143] // left value = acc[140+0:143+0]
 /*  mfmaIndex:36  */
 /* localReadsVacancy: latencyLeft 2 */
+ds_read_b128 v[vgprValuB_X0_I0+40:vgprValuB_X0_I0+40+3], v[vgprLocalReadAddrB] offset:8832 // L -> Reg lro=0 swapByteOffset=0 ti=128 vIdx=1 eIdx=2 rIdx=0 oIdx=0 buffer=0 iui=0
+s_waitcnt lgkmcnt(1)                               // wait for prior local read local write old=0, new=0 newLW=0 newLR=0 for iteration == 0
 v_mfma_f32_16x16x16_f16 acc[144:147], v[vgprG2LA+16+0:vgprG2LA+16+0+1], v[vgprValuB_X0_I0+36+0+0:vgprValuB_X0_I0+36+0+0+1], acc[144:147] // left value = acc[144+0:147+0]
 /*  mfmaIndex:37  */
 /* localReadsVacancy: latencyLeft 2 */
@@ -4054,6 +4114,8 @@ v_mfma_f32_16x16x16_f16 acc[152:155], v[vgprG2LA+24+0:vgprG2LA+24+0+1], v[vgprVa
 v_mfma_f32_16x16x16_f16 acc[156:159], v[vgprG2LA+28+0:vgprG2LA+28+0+1], v[vgprValuB_X0_I0+36+0+0:vgprValuB_X0_I0+36+0+0+1], acc[156:159] // left value = acc[156+0:159+0]
 /*  mfmaIndex:40  */
 /* localReadsVacancy: latencyLeft 2 */
+ds_read_b128 v[vgprValuB_X0_I0+44:vgprValuB_X0_I0+44+3], v[vgprLocalReadAddrB] offset:8896 // L -> Reg lro=0 swapByteOffset=0 ti=128 vIdx=1 eIdx=3 rIdx=0 oIdx=0 buffer=0 iui=0
+s_waitcnt lgkmcnt(1)                               // wait for prior local read local write old=0, new=0 newLW=0 newLR=0 for iteration == 0
 v_mfma_f32_16x16x16_f16 acc[160:163], v[vgprG2LA+16+0:vgprG2LA+16+0+1], v[vgprValuB_X0_I0+40+0+0:vgprValuB_X0_I0+40+0+0+1], acc[160:163] // left value = acc[160+0:163+0]
 /*  mfmaIndex:41  */
 /* localReadsVacancy: latencyLeft 2 */
@@ -4066,6 +4128,8 @@ v_mfma_f32_16x16x16_f16 acc[168:171], v[vgprG2LA+24+0:vgprG2LA+24+0+1], v[vgprVa
 v_mfma_f32_16x16x16_f16 acc[172:175], v[vgprG2LA+28+0:vgprG2LA+28+0+1], v[vgprValuB_X0_I0+40+0+0:vgprValuB_X0_I0+40+0+0+1], acc[172:175] // left value = acc[172+0:175+0]
 /*  mfmaIndex:44  */
 /* localReadsVacancy: latencyLeft 2 */
+ds_read_b128 v[vgprValuB_X0_I0+48:vgprValuB_X0_I0+48+3], v[vgprLocalReadAddrB] offset:8960 // L -> Reg lro=0 swapByteOffset=0 ti=128 vIdx=1 eIdx=4 rIdx=0 oIdx=0 buffer=0 iui=0
+s_waitcnt lgkmcnt(1)                               // wait for prior local read local write old=0, new=0 newLW=0 newLR=0 for iteration == 0
 v_mfma_f32_16x16x16_f16 acc[176:179], v[vgprG2LA+16+0:vgprG2LA+16+0+1], v[vgprValuB_X0_I0+44+0+0:vgprValuB_X0_I0+44+0+0+1], acc[176:179] // left value = acc[176+0:179+0]
 /*  mfmaIndex:45  */
 /* localReadsVacancy: latencyLeft 2 */
@@ -4078,6 +4142,8 @@ v_mfma_f32_16x16x16_f16 acc[184:187], v[vgprG2LA+24+0:vgprG2LA+24+0+1], v[vgprVa
 v_mfma_f32_16x16x16_f16 acc[188:191], v[vgprG2LA+28+0:vgprG2LA+28+0+1], v[vgprValuB_X0_I0+44+0+0:vgprValuB_X0_I0+44+0+0+1], acc[188:191] // left value = acc[188+0:191+0]
 /*  mfmaIndex:48  */
 /* localReadsVacancy: latencyLeft 2 */
+ds_read_b128 v[vgprValuB_X0_I0+52:vgprValuB_X0_I0+52+3], v[vgprLocalReadAddrB] offset:9024 // L -> Reg lro=0 swapByteOffset=0 ti=128 vIdx=1 eIdx=5 rIdx=0 oIdx=0 buffer=0 iui=0
+s_waitcnt lgkmcnt(1)                               // wait for prior local read local write old=0, new=0 newLW=0 newLR=0 for iteration == 0
 v_mfma_f32_16x16x16_f16 acc[192:195], v[vgprG2LA+16+0:vgprG2LA+16+0+1], v[vgprValuB_X0_I0+48+0+0:vgprValuB_X0_I0+48+0+0+1], acc[192:195] // left value = acc[192+0:195+0]
 /*  mfmaIndex:49  */
 /* localReadsVacancy: latencyLeft 2 */
@@ -4090,6 +4156,8 @@ v_mfma_f32_16x16x16_f16 acc[200:203], v[vgprG2LA+24+0:vgprG2LA+24+0+1], v[vgprVa
 v_mfma_f32_16x16x16_f16 acc[204:207], v[vgprG2LA+28+0:vgprG2LA+28+0+1], v[vgprValuB_X0_I0+48+0+0:vgprValuB_X0_I0+48+0+0+1], acc[204:207] // left value = acc[204+0:207+0]
 /*  mfmaIndex:52  */
 /* localReadsVacancy: latencyLeft 2 */
+ds_read_b128 v[vgprValuB_X0_I0+56:vgprValuB_X0_I0+56+3], v[vgprLocalReadAddrB] offset:9088 // L -> Reg lro=0 swapByteOffset=0 ti=128 vIdx=1 eIdx=6 rIdx=0 oIdx=0 buffer=0 iui=0
+s_waitcnt lgkmcnt(1)                               // wait for prior local read local write old=0, new=0 newLW=0 newLR=0 for iteration == 0
 v_mfma_f32_16x16x16_f16 acc[208:211], v[vgprG2LA+16+0:vgprG2LA+16+0+1], v[vgprValuB_X0_I0+52+0+0:vgprValuB_X0_I0+52+0+0+1], acc[208:211] // left value = acc[208+0:211+0]
 /*  mfmaIndex:53  */
 /* localReadsVacancy: latencyLeft 2 */
@@ -4102,6 +4170,8 @@ v_mfma_f32_16x16x16_f16 acc[216:219], v[vgprG2LA+24+0:vgprG2LA+24+0+1], v[vgprVa
 v_mfma_f32_16x16x16_f16 acc[220:223], v[vgprG2LA+28+0:vgprG2LA+28+0+1], v[vgprValuB_X0_I0+52+0+0:vgprValuB_X0_I0+52+0+0+1], acc[220:223] // left value = acc[220+0:223+0]
 /*  mfmaIndex:56  */
 /* localReadsVacancy: latencyLeft 2 */
+ds_read_b128 v[vgprValuB_X0_I0+60:vgprValuB_X0_I0+60+3], v[vgprLocalReadAddrB] offset:9152 // L -> Reg lro=0 swapByteOffset=0 ti=128 vIdx=1 eIdx=7 rIdx=0 oIdx=0 buffer=0 iui=0
+s_waitcnt lgkmcnt(1)                               // wait for prior local read local write old=0, new=0 newLW=0 newLR=0 for iteration == 0
 v_mfma_f32_16x16x16_f16 acc[224:227], v[vgprG2LA+16+0:vgprG2LA+16+0+1], v[vgprValuB_X0_I0+56+0+0:vgprValuB_X0_I0+56+0+0+1], acc[224:227] // left value = acc[224+0:227+0]
 /*  mfmaIndex:57  */
 /* localReadsVacancy: latencyLeft 2 */
@@ -4114,6 +4184,7 @@ v_mfma_f32_16x16x16_f16 acc[232:235], v[vgprG2LA+24+0:vgprG2LA+24+0+1], v[vgprVa
 v_mfma_f32_16x16x16_f16 acc[236:239], v[vgprG2LA+28+0:vgprG2LA+28+0+1], v[vgprValuB_X0_I0+56+0+0:vgprValuB_X0_I0+56+0+0+1], acc[236:239] // left value = acc[236+0:239+0]
 /*  mfmaIndex:60  */
 /* localReadsVacancy: latencyLeft 2 */
+s_waitcnt lgkmcnt(0)                               // wait for prior local read local write old=0, new=0 newLW=0 newLR=0 for iteration == 0
 v_mfma_f32_16x16x16_f16 acc[240:243], v[vgprG2LA+16+0:vgprG2LA+16+0+1], v[vgprValuB_X0_I0+60+0+0:vgprValuB_X0_I0+60+0+0+1], acc[240:243] // left value = acc[240+0:243+0]
 /*  mfmaIndex:61  */
 /* localReadsVacancy: latencyLeft 2 */
@@ -4133,7 +4204,6 @@ v_mfma_f32_16x16x16_f16 acc[252:255], v[vgprG2LA+28+0:vgprG2LA+28+0+1], v[vgprVa
 /*  numMfmaForLR:30, syncPlrMfmaIndex:0  */
 /*  mfmaIndex:64  */
 /* localReadsVacancy: latencyLeft 2 */
-s_waitcnt lgkmcnt(0)                               // wait for prior local read local write old=0, new=0 newLW=0 newLR=0
 v_mfma_f32_16x16x16_f16 acc[0:3], v[vgprG2LA+16+2:vgprG2LA+16+2+1], v[vgprValuB_X0_I0+0+2+0:vgprValuB_X0_I0+0+2+0+1], acc[0:3] // left value = acc[0+0:3+0]
 /*  mfmaIndex:65  */
 /* localReadsVacancy: latencyLeft 2 */
@@ -4344,21 +4414,7 @@ s_waitcnt vmcnt(0)                                 // global read wait for Direc
 /*  mfmaIndex:0  */
 ds_read_b128 v[vgprValuB_X0_I0+0:vgprValuB_X0_I0+0+3], v[vgprLocalReadAddrB] offset:0 // L -> Reg lro=0 swapByteOffset=0 ti=128 vIdx=0 eIdx=0 rIdx=0 oIdx=0 buffer=0 iui=0
 ds_read_b128 v[vgprValuB_X0_I0+4:vgprValuB_X0_I0+4+3], v[vgprLocalReadAddrB] offset:64 // L -> Reg lro=0 swapByteOffset=0 ti=128 vIdx=0 eIdx=1 rIdx=0 oIdx=0 buffer=0 iui=0
-ds_read_b128 v[vgprValuB_X0_I0+8:vgprValuB_X0_I0+8+3], v[vgprLocalReadAddrB] offset:128 // L -> Reg lro=0 swapByteOffset=0 ti=128 vIdx=0 eIdx=2 rIdx=0 oIdx=0 buffer=0 iui=0
-ds_read_b128 v[vgprValuB_X0_I0+12:vgprValuB_X0_I0+12+3], v[vgprLocalReadAddrB] offset:192 // L -> Reg lro=0 swapByteOffset=0 ti=128 vIdx=0 eIdx=3 rIdx=0 oIdx=0 buffer=0 iui=0
-ds_read_b128 v[vgprValuB_X0_I0+16:vgprValuB_X0_I0+16+3], v[vgprLocalReadAddrB] offset:256 // L -> Reg lro=0 swapByteOffset=0 ti=128 vIdx=0 eIdx=4 rIdx=0 oIdx=0 buffer=0 iui=0
-ds_read_b128 v[vgprValuB_X0_I0+20:vgprValuB_X0_I0+20+3], v[vgprLocalReadAddrB] offset:320 // L -> Reg lro=0 swapByteOffset=0 ti=128 vIdx=0 eIdx=5 rIdx=0 oIdx=0 buffer=0 iui=0
-ds_read_b128 v[vgprValuB_X0_I0+24:vgprValuB_X0_I0+24+3], v[vgprLocalReadAddrB] offset:384 // L -> Reg lro=0 swapByteOffset=0 ti=128 vIdx=0 eIdx=6 rIdx=0 oIdx=0 buffer=0 iui=0
-ds_read_b128 v[vgprValuB_X0_I0+28:vgprValuB_X0_I0+28+3], v[vgprLocalReadAddrB] offset:448 // L -> Reg lro=0 swapByteOffset=0 ti=128 vIdx=0 eIdx=7 rIdx=0 oIdx=0 buffer=0 iui=0
-ds_read_b128 v[vgprValuB_X0_I0+32:vgprValuB_X0_I0+32+3], v[vgprLocalReadAddrB] offset:8704 // L -> Reg lro=0 swapByteOffset=0 ti=128 vIdx=1 eIdx=0 rIdx=0 oIdx=0 buffer=0 iui=0
-ds_read_b128 v[vgprValuB_X0_I0+36:vgprValuB_X0_I0+36+3], v[vgprLocalReadAddrB] offset:8768 // L -> Reg lro=0 swapByteOffset=0 ti=128 vIdx=1 eIdx=1 rIdx=0 oIdx=0 buffer=0 iui=0
-ds_read_b128 v[vgprValuB_X0_I0+40:vgprValuB_X0_I0+40+3], v[vgprLocalReadAddrB] offset:8832 // L -> Reg lro=0 swapByteOffset=0 ti=128 vIdx=1 eIdx=2 rIdx=0 oIdx=0 buffer=0 iui=0
-ds_read_b128 v[vgprValuB_X0_I0+44:vgprValuB_X0_I0+44+3], v[vgprLocalReadAddrB] offset:8896 // L -> Reg lro=0 swapByteOffset=0 ti=128 vIdx=1 eIdx=3 rIdx=0 oIdx=0 buffer=0 iui=0
-ds_read_b128 v[vgprValuB_X0_I0+48:vgprValuB_X0_I0+48+3], v[vgprLocalReadAddrB] offset:8960 // L -> Reg lro=0 swapByteOffset=0 ti=128 vIdx=1 eIdx=4 rIdx=0 oIdx=0 buffer=0 iui=0
-ds_read_b128 v[vgprValuB_X0_I0+52:vgprValuB_X0_I0+52+3], v[vgprLocalReadAddrB] offset:9024 // L -> Reg lro=0 swapByteOffset=0 ti=128 vIdx=1 eIdx=5 rIdx=0 oIdx=0 buffer=0 iui=0
-ds_read_b128 v[vgprValuB_X0_I0+56:vgprValuB_X0_I0+56+3], v[vgprLocalReadAddrB] offset:9088 // L -> Reg lro=0 swapByteOffset=0 ti=128 vIdx=1 eIdx=6 rIdx=0 oIdx=0 buffer=0 iui=0
-ds_read_b128 v[vgprValuB_X0_I0+60:vgprValuB_X0_I0+60+3], v[vgprLocalReadAddrB] offset:9152 // L -> Reg lro=0 swapByteOffset=0 ti=128 vIdx=1 eIdx=7 rIdx=0 oIdx=0 buffer=0 iui=0
-s_waitcnt lgkmcnt(0)                               // wait for prior local read local write old=0, new=0 newLW=0 newLR=0 for iteration == 0
+s_waitcnt lgkmcnt(1)                               // wait for prior local read local write old=0, new=0 newLW=0 newLR=0 for iteration == 0
 v_mfma_f32_16x16x16_f16 acc[0:3], v[vgprG2LA+0+0:vgprG2LA+0+0+1], v[vgprValuB_X0_I0+0+0+0:vgprValuB_X0_I0+0+0+0+1], acc[0:3] // left value = acc[0+0:3+0]
 /*  mfmaIndex:1  */
 /* localReadsVacancy: latencyLeft 2 */
@@ -4377,7 +4433,8 @@ v_mfma_f32_16x16x16_f16 acc[12:15], v[vgprG2LA+12+0:vgprG2LA+12+0+1], v[vgprValu
 /*  mfmaIndex:4  */
 /* localReadsVacancy: latencyLeft 2 */
 s_add_u32 s[sgprSrdA+0], s[sgprSrdA+0], s28        // gra SRD += inc(lower)
-s_waitcnt lgkmcnt(15)                              // wait for prior local read local write
+ds_read_b128 v[vgprValuB_X0_I0+8:vgprValuB_X0_I0+8+3], v[vgprLocalReadAddrB] offset:128 // L -> Reg lro=0 swapByteOffset=0 ti=128 vIdx=0 eIdx=2 rIdx=0 oIdx=0 buffer=0 iui=0
+s_waitcnt lgkmcnt(1)                               // wait for prior local read local write old=0, new=0 newLW=0 newLR=0 for iteration == 0
 v_mfma_f32_16x16x16_f16 acc[16:19], v[vgprG2LA+0+0:vgprG2LA+0+0+1], v[vgprValuB_X0_I0+4+0+0:vgprValuB_X0_I0+4+0+0+1], acc[16:19] // left value = acc[16+0:19+0]
 /*  mfmaIndex:5  */
 /* localReadsVacancy: latencyLeft 2 */
@@ -4394,6 +4451,8 @@ v_mfma_f32_16x16x16_f16 acc[28:31], v[vgprG2LA+12+0:vgprG2LA+12+0+1], v[vgprValu
 /*  mfmaIndex:8  */
 /* localReadsVacancy: latencyLeft 2 */
 s_cmp_eq_u32 s[sgprShadowLimitA+1], 0              // are we within 2^32?
+ds_read_b128 v[vgprValuB_X0_I0+12:vgprValuB_X0_I0+12+3], v[vgprLocalReadAddrB] offset:192 // L -> Reg lro=0 swapByteOffset=0 ti=128 vIdx=0 eIdx=3 rIdx=0 oIdx=0 buffer=0 iui=0
+s_waitcnt lgkmcnt(1)                               // wait for prior local read local write old=0, new=0 newLW=0 newLR=0 for iteration == 0
 v_mfma_f32_16x16x16_f16 acc[32:35], v[vgprG2LA+0+0:vgprG2LA+0+0+1], v[vgprValuB_X0_I0+8+0+0:vgprValuB_X0_I0+8+0+0+1], acc[32:35] // left value = acc[32+0:35+0]
 /*  mfmaIndex:9  */
 /* localReadsVacancy: latencyLeft 2 */
@@ -4407,6 +4466,8 @@ v_mfma_f32_16x16x16_f16 acc[40:43], v[vgprG2LA+8+0:vgprG2LA+8+0+1], v[vgprValuB_
 v_mfma_f32_16x16x16_f16 acc[44:47], v[vgprG2LA+12+0:vgprG2LA+12+0+1], v[vgprValuB_X0_I0+8+0+0:vgprValuB_X0_I0+8+0+0+1], acc[44:47] // left value = acc[44+0:47+0]
 /*  mfmaIndex:12  */
 /* localReadsVacancy: latencyLeft 2 */
+ds_read_b128 v[vgprValuB_X0_I0+16:vgprValuB_X0_I0+16+3], v[vgprLocalReadAddrB] offset:256 // L -> Reg lro=0 swapByteOffset=0 ti=128 vIdx=0 eIdx=4 rIdx=0 oIdx=0 buffer=0 iui=0
+s_waitcnt lgkmcnt(1)                               // wait for prior local read local write old=0, new=0 newLW=0 newLR=0 for iteration == 0
 v_mfma_f32_16x16x16_f16 acc[48:51], v[vgprG2LA+0+0:vgprG2LA+0+0+1], v[vgprValuB_X0_I0+12+0+0:vgprValuB_X0_I0+12+0+0+1], acc[48:51] // left value = acc[48+0:51+0]
 /*  mfmaIndex:13  */
 /* localReadsVacancy: latencyLeft 2 */
@@ -4419,6 +4480,8 @@ v_mfma_f32_16x16x16_f16 acc[56:59], v[vgprG2LA+8+0:vgprG2LA+8+0+1], v[vgprValuB_
 v_mfma_f32_16x16x16_f16 acc[60:63], v[vgprG2LA+12+0:vgprG2LA+12+0+1], v[vgprValuB_X0_I0+12+0+0:vgprValuB_X0_I0+12+0+0+1], acc[60:63] // left value = acc[60+0:63+0]
 /*  mfmaIndex:16  */
 /* localReadsVacancy: latencyLeft 2 */
+ds_read_b128 v[vgprValuB_X0_I0+20:vgprValuB_X0_I0+20+3], v[vgprLocalReadAddrB] offset:320 // L -> Reg lro=0 swapByteOffset=0 ti=128 vIdx=0 eIdx=5 rIdx=0 oIdx=0 buffer=0 iui=0
+s_waitcnt lgkmcnt(1)                               // wait for prior local read local write old=0, new=0 newLW=0 newLR=0 for iteration == 0
 v_mfma_f32_16x16x16_f16 acc[64:67], v[vgprG2LA+0+0:vgprG2LA+0+0+1], v[vgprValuB_X0_I0+16+0+0:vgprValuB_X0_I0+16+0+0+1], acc[64:67] // left value = acc[64+0:67+0]
 /*  mfmaIndex:17  */
 /* localReadsVacancy: latencyLeft 2 */
@@ -4431,6 +4494,8 @@ v_mfma_f32_16x16x16_f16 acc[72:75], v[vgprG2LA+8+0:vgprG2LA+8+0+1], v[vgprValuB_
 v_mfma_f32_16x16x16_f16 acc[76:79], v[vgprG2LA+12+0:vgprG2LA+12+0+1], v[vgprValuB_X0_I0+16+0+0:vgprValuB_X0_I0+16+0+0+1], acc[76:79] // left value = acc[76+0:79+0]
 /*  mfmaIndex:20  */
 /* localReadsVacancy: latencyLeft 2 */
+ds_read_b128 v[vgprValuB_X0_I0+24:vgprValuB_X0_I0+24+3], v[vgprLocalReadAddrB] offset:384 // L -> Reg lro=0 swapByteOffset=0 ti=128 vIdx=0 eIdx=6 rIdx=0 oIdx=0 buffer=0 iui=0
+s_waitcnt lgkmcnt(1)                               // wait for prior local read local write old=0, new=0 newLW=0 newLR=0 for iteration == 0
 v_mfma_f32_16x16x16_f16 acc[80:83], v[vgprG2LA+0+0:vgprG2LA+0+0+1], v[vgprValuB_X0_I0+20+0+0:vgprValuB_X0_I0+20+0+0+1], acc[80:83] // left value = acc[80+0:83+0]
 /*  mfmaIndex:21  */
 /* localReadsVacancy: latencyLeft 2 */
@@ -4443,6 +4508,8 @@ v_mfma_f32_16x16x16_f16 acc[88:91], v[vgprG2LA+8+0:vgprG2LA+8+0+1], v[vgprValuB_
 v_mfma_f32_16x16x16_f16 acc[92:95], v[vgprG2LA+12+0:vgprG2LA+12+0+1], v[vgprValuB_X0_I0+20+0+0:vgprValuB_X0_I0+20+0+0+1], acc[92:95] // left value = acc[92+0:95+0]
 /*  mfmaIndex:24  */
 /* localReadsVacancy: latencyLeft 2 */
+ds_read_b128 v[vgprValuB_X0_I0+28:vgprValuB_X0_I0+28+3], v[vgprLocalReadAddrB] offset:448 // L -> Reg lro=0 swapByteOffset=0 ti=128 vIdx=0 eIdx=7 rIdx=0 oIdx=0 buffer=0 iui=0
+s_waitcnt lgkmcnt(1)                               // wait for prior local read local write old=0, new=0 newLW=0 newLR=0 for iteration == 0
 v_mfma_f32_16x16x16_f16 acc[96:99], v[vgprG2LA+0+0:vgprG2LA+0+0+1], v[vgprValuB_X0_I0+24+0+0:vgprValuB_X0_I0+24+0+0+1], acc[96:99] // left value = acc[96+0:99+0]
 /*  mfmaIndex:25  */
 /* localReadsVacancy: latencyLeft 2 */
@@ -4455,6 +4522,8 @@ v_mfma_f32_16x16x16_f16 acc[104:107], v[vgprG2LA+8+0:vgprG2LA+8+0+1], v[vgprValu
 v_mfma_f32_16x16x16_f16 acc[108:111], v[vgprG2LA+12+0:vgprG2LA+12+0+1], v[vgprValuB_X0_I0+24+0+0:vgprValuB_X0_I0+24+0+0+1], acc[108:111] // left value = acc[108+0:111+0]
 /*  mfmaIndex:28  */
 /* localReadsVacancy: latencyLeft 2 */
+ds_read_b128 v[vgprValuB_X0_I0+32:vgprValuB_X0_I0+32+3], v[vgprLocalReadAddrB] offset:8704 // L -> Reg lro=0 swapByteOffset=0 ti=128 vIdx=1 eIdx=0 rIdx=0 oIdx=0 buffer=0 iui=0
+s_waitcnt lgkmcnt(1)                               // wait for prior local read local write old=0, new=0 newLW=0 newLR=0 for iteration == 0
 v_mfma_f32_16x16x16_f16 acc[112:115], v[vgprG2LA+0+0:vgprG2LA+0+0+1], v[vgprValuB_X0_I0+28+0+0:vgprValuB_X0_I0+28+0+0+1], acc[112:115] // left value = acc[112+0:115+0]
 /*  mfmaIndex:29  */
 /* localReadsVacancy: latencyLeft 2 */
@@ -4467,6 +4536,8 @@ v_mfma_f32_16x16x16_f16 acc[120:123], v[vgprG2LA+8+0:vgprG2LA+8+0+1], v[vgprValu
 v_mfma_f32_16x16x16_f16 acc[124:127], v[vgprG2LA+12+0:vgprG2LA+12+0+1], v[vgprValuB_X0_I0+28+0+0:vgprValuB_X0_I0+28+0+0+1], acc[124:127] // left value = acc[124+0:127+0]
 /*  mfmaIndex:32  */
 /* localReadsVacancy: latencyLeft 2 */
+ds_read_b128 v[vgprValuB_X0_I0+36:vgprValuB_X0_I0+36+3], v[vgprLocalReadAddrB] offset:8768 // L -> Reg lro=0 swapByteOffset=0 ti=128 vIdx=1 eIdx=1 rIdx=0 oIdx=0 buffer=0 iui=0
+s_waitcnt lgkmcnt(1)                               // wait for prior local read local write old=0, new=0 newLW=0 newLR=0 for iteration == 0
 v_mfma_f32_16x16x16_f16 acc[128:131], v[vgprG2LA+0+0:vgprG2LA+0+0+1], v[vgprValuB_X0_I0+32+0+0:vgprValuB_X0_I0+32+0+0+1], acc[128:131] // left value = acc[128+0:131+0]
 /*  mfmaIndex:33  */
 /* localReadsVacancy: latencyLeft 2 */
@@ -4479,6 +4550,8 @@ v_mfma_f32_16x16x16_f16 acc[136:139], v[vgprG2LA+8+0:vgprG2LA+8+0+1], v[vgprValu
 v_mfma_f32_16x16x16_f16 acc[140:143], v[vgprG2LA+12+0:vgprG2LA+12+0+1], v[vgprValuB_X0_I0+32+0+0:vgprValuB_X0_I0+32+0+0+1], acc[140:143] // left value = acc[140+0:143+0]
 /*  mfmaIndex:36  */
 /* localReadsVacancy: latencyLeft 2 */
+ds_read_b128 v[vgprValuB_X0_I0+40:vgprValuB_X0_I0+40+3], v[vgprLocalReadAddrB] offset:8832 // L -> Reg lro=0 swapByteOffset=0 ti=128 vIdx=1 eIdx=2 rIdx=0 oIdx=0 buffer=0 iui=0
+s_waitcnt lgkmcnt(1)                               // wait for prior local read local write old=0, new=0 newLW=0 newLR=0 for iteration == 0
 v_mfma_f32_16x16x16_f16 acc[144:147], v[vgprG2LA+0+0:vgprG2LA+0+0+1], v[vgprValuB_X0_I0+36+0+0:vgprValuB_X0_I0+36+0+0+1], acc[144:147] // left value = acc[144+0:147+0]
 /*  mfmaIndex:37  */
 /* localReadsVacancy: latencyLeft 2 */
@@ -4491,6 +4564,8 @@ v_mfma_f32_16x16x16_f16 acc[152:155], v[vgprG2LA+8+0:vgprG2LA+8+0+1], v[vgprValu
 v_mfma_f32_16x16x16_f16 acc[156:159], v[vgprG2LA+12+0:vgprG2LA+12+0+1], v[vgprValuB_X0_I0+36+0+0:vgprValuB_X0_I0+36+0+0+1], acc[156:159] // left value = acc[156+0:159+0]
 /*  mfmaIndex:40  */
 /* localReadsVacancy: latencyLeft 2 */
+ds_read_b128 v[vgprValuB_X0_I0+44:vgprValuB_X0_I0+44+3], v[vgprLocalReadAddrB] offset:8896 // L -> Reg lro=0 swapByteOffset=0 ti=128 vIdx=1 eIdx=3 rIdx=0 oIdx=0 buffer=0 iui=0
+s_waitcnt lgkmcnt(1)                               // wait for prior local read local write old=0, new=0 newLW=0 newLR=0 for iteration == 0
 v_mfma_f32_16x16x16_f16 acc[160:163], v[vgprG2LA+0+0:vgprG2LA+0+0+1], v[vgprValuB_X0_I0+40+0+0:vgprValuB_X0_I0+40+0+0+1], acc[160:163] // left value = acc[160+0:163+0]
 /*  mfmaIndex:41  */
 /* localReadsVacancy: latencyLeft 2 */
@@ -4503,6 +4578,8 @@ v_mfma_f32_16x16x16_f16 acc[168:171], v[vgprG2LA+8+0:vgprG2LA+8+0+1], v[vgprValu
 v_mfma_f32_16x16x16_f16 acc[172:175], v[vgprG2LA+12+0:vgprG2LA+12+0+1], v[vgprValuB_X0_I0+40+0+0:vgprValuB_X0_I0+40+0+0+1], acc[172:175] // left value = acc[172+0:175+0]
 /*  mfmaIndex:44  */
 /* localReadsVacancy: latencyLeft 2 */
+ds_read_b128 v[vgprValuB_X0_I0+48:vgprValuB_X0_I0+48+3], v[vgprLocalReadAddrB] offset:8960 // L -> Reg lro=0 swapByteOffset=0 ti=128 vIdx=1 eIdx=4 rIdx=0 oIdx=0 buffer=0 iui=0
+s_waitcnt lgkmcnt(1)                               // wait for prior local read local write old=0, new=0 newLW=0 newLR=0 for iteration == 0
 v_mfma_f32_16x16x16_f16 acc[176:179], v[vgprG2LA+0+0:vgprG2LA+0+0+1], v[vgprValuB_X0_I0+44+0+0:vgprValuB_X0_I0+44+0+0+1], acc[176:179] // left value = acc[176+0:179+0]
 /*  mfmaIndex:45  */
 /* localReadsVacancy: latencyLeft 2 */
@@ -4515,6 +4592,8 @@ v_mfma_f32_16x16x16_f16 acc[184:187], v[vgprG2LA+8+0:vgprG2LA+8+0+1], v[vgprValu
 v_mfma_f32_16x16x16_f16 acc[188:191], v[vgprG2LA+12+0:vgprG2LA+12+0+1], v[vgprValuB_X0_I0+44+0+0:vgprValuB_X0_I0+44+0+0+1], acc[188:191] // left value = acc[188+0:191+0]
 /*  mfmaIndex:48  */
 /* localReadsVacancy: latencyLeft 2 */
+ds_read_b128 v[vgprValuB_X0_I0+52:vgprValuB_X0_I0+52+3], v[vgprLocalReadAddrB] offset:9024 // L -> Reg lro=0 swapByteOffset=0 ti=128 vIdx=1 eIdx=5 rIdx=0 oIdx=0 buffer=0 iui=0
+s_waitcnt lgkmcnt(1)                               // wait for prior local read local write old=0, new=0 newLW=0 newLR=0 for iteration == 0
 v_mfma_f32_16x16x16_f16 acc[192:195], v[vgprG2LA+0+0:vgprG2LA+0+0+1], v[vgprValuB_X0_I0+48+0+0:vgprValuB_X0_I0+48+0+0+1], acc[192:195] // left value = acc[192+0:195+0]
 /*  mfmaIndex:49  */
 /* localReadsVacancy: latencyLeft 2 */
@@ -4527,6 +4606,8 @@ v_mfma_f32_16x16x16_f16 acc[200:203], v[vgprG2LA+8+0:vgprG2LA+8+0+1], v[vgprValu
 v_mfma_f32_16x16x16_f16 acc[204:207], v[vgprG2LA+12+0:vgprG2LA+12+0+1], v[vgprValuB_X0_I0+48+0+0:vgprValuB_X0_I0+48+0+0+1], acc[204:207] // left value = acc[204+0:207+0]
 /*  mfmaIndex:52  */
 /* localReadsVacancy: latencyLeft 2 */
+ds_read_b128 v[vgprValuB_X0_I0+56:vgprValuB_X0_I0+56+3], v[vgprLocalReadAddrB] offset:9088 // L -> Reg lro=0 swapByteOffset=0 ti=128 vIdx=1 eIdx=6 rIdx=0 oIdx=0 buffer=0 iui=0
+s_waitcnt lgkmcnt(1)                               // wait for prior local read local write old=0, new=0 newLW=0 newLR=0 for iteration == 0
 v_mfma_f32_16x16x16_f16 acc[208:211], v[vgprG2LA+0+0:vgprG2LA+0+0+1], v[vgprValuB_X0_I0+52+0+0:vgprValuB_X0_I0+52+0+0+1], acc[208:211] // left value = acc[208+0:211+0]
 /*  mfmaIndex:53  */
 /* localReadsVacancy: latencyLeft 2 */
@@ -4539,6 +4620,8 @@ v_mfma_f32_16x16x16_f16 acc[216:219], v[vgprG2LA+8+0:vgprG2LA+8+0+1], v[vgprValu
 v_mfma_f32_16x16x16_f16 acc[220:223], v[vgprG2LA+12+0:vgprG2LA+12+0+1], v[vgprValuB_X0_I0+52+0+0:vgprValuB_X0_I0+52+0+0+1], acc[220:223] // left value = acc[220+0:223+0]
 /*  mfmaIndex:56  */
 /* localReadsVacancy: latencyLeft 2 */
+ds_read_b128 v[vgprValuB_X0_I0+60:vgprValuB_X0_I0+60+3], v[vgprLocalReadAddrB] offset:9152 // L -> Reg lro=0 swapByteOffset=0 ti=128 vIdx=1 eIdx=7 rIdx=0 oIdx=0 buffer=0 iui=0
+s_waitcnt lgkmcnt(1)                               // wait for prior local read local write old=0, new=0 newLW=0 newLR=0 for iteration == 0
 v_mfma_f32_16x16x16_f16 acc[224:227], v[vgprG2LA+0+0:vgprG2LA+0+0+1], v[vgprValuB_X0_I0+56+0+0:vgprValuB_X0_I0+56+0+0+1], acc[224:227] // left value = acc[224+0:227+0]
 /*  mfmaIndex:57  */
 /* localReadsVacancy: latencyLeft 2 */
@@ -4551,6 +4634,7 @@ v_mfma_f32_16x16x16_f16 acc[232:235], v[vgprG2LA+8+0:vgprG2LA+8+0+1], v[vgprValu
 v_mfma_f32_16x16x16_f16 acc[236:239], v[vgprG2LA+12+0:vgprG2LA+12+0+1], v[vgprValuB_X0_I0+56+0+0:vgprValuB_X0_I0+56+0+0+1], acc[236:239] // left value = acc[236+0:239+0]
 /*  mfmaIndex:60  */
 /* localReadsVacancy: latencyLeft 2 */
+s_waitcnt lgkmcnt(0)                               // wait for prior local read local write old=0, new=0 newLW=0 newLR=0 for iteration == 0
 v_mfma_f32_16x16x16_f16 acc[240:243], v[vgprG2LA+0+0:vgprG2LA+0+0+1], v[vgprValuB_X0_I0+60+0+0:vgprValuB_X0_I0+60+0+0+1], acc[240:243] // left value = acc[240+0:243+0]
 /*  mfmaIndex:61  */
 /* localReadsVacancy: latencyLeft 2 */
@@ -6105,21 +6189,7 @@ s_waitcnt vmcnt(0)                                 // global read wait for Direc
 /*  mfmaIndex:0  */
 ds_read_b128 v[vgprValuB_X0_I0+0:vgprValuB_X0_I0+0+3], v[vgprLocalReadAddrB] offset:0 // L -> Reg lro=0 swapByteOffset=0 ti=128 vIdx=0 eIdx=0 rIdx=0 oIdx=0 buffer=0 iui=0
 ds_read_b128 v[vgprValuB_X0_I0+4:vgprValuB_X0_I0+4+3], v[vgprLocalReadAddrB] offset:64 // L -> Reg lro=0 swapByteOffset=0 ti=128 vIdx=0 eIdx=1 rIdx=0 oIdx=0 buffer=0 iui=0
-ds_read_b128 v[vgprValuB_X0_I0+8:vgprValuB_X0_I0+8+3], v[vgprLocalReadAddrB] offset:128 // L -> Reg lro=0 swapByteOffset=0 ti=128 vIdx=0 eIdx=2 rIdx=0 oIdx=0 buffer=0 iui=0
-ds_read_b128 v[vgprValuB_X0_I0+12:vgprValuB_X0_I0+12+3], v[vgprLocalReadAddrB] offset:192 // L -> Reg lro=0 swapByteOffset=0 ti=128 vIdx=0 eIdx=3 rIdx=0 oIdx=0 buffer=0 iui=0
-ds_read_b128 v[vgprValuB_X0_I0+16:vgprValuB_X0_I0+16+3], v[vgprLocalReadAddrB] offset:256 // L -> Reg lro=0 swapByteOffset=0 ti=128 vIdx=0 eIdx=4 rIdx=0 oIdx=0 buffer=0 iui=0
-ds_read_b128 v[vgprValuB_X0_I0+20:vgprValuB_X0_I0+20+3], v[vgprLocalReadAddrB] offset:320 // L -> Reg lro=0 swapByteOffset=0 ti=128 vIdx=0 eIdx=5 rIdx=0 oIdx=0 buffer=0 iui=0
-ds_read_b128 v[vgprValuB_X0_I0+24:vgprValuB_X0_I0+24+3], v[vgprLocalReadAddrB] offset:384 // L -> Reg lro=0 swapByteOffset=0 ti=128 vIdx=0 eIdx=6 rIdx=0 oIdx=0 buffer=0 iui=0
-ds_read_b128 v[vgprValuB_X0_I0+28:vgprValuB_X0_I0+28+3], v[vgprLocalReadAddrB] offset:448 // L -> Reg lro=0 swapByteOffset=0 ti=128 vIdx=0 eIdx=7 rIdx=0 oIdx=0 buffer=0 iui=0
-ds_read_b128 v[vgprValuB_X0_I0+32:vgprValuB_X0_I0+32+3], v[vgprLocalReadAddrB] offset:8704 // L -> Reg lro=0 swapByteOffset=0 ti=128 vIdx=1 eIdx=0 rIdx=0 oIdx=0 buffer=0 iui=0
-ds_read_b128 v[vgprValuB_X0_I0+36:vgprValuB_X0_I0+36+3], v[vgprLocalReadAddrB] offset:8768 // L -> Reg lro=0 swapByteOffset=0 ti=128 vIdx=1 eIdx=1 rIdx=0 oIdx=0 buffer=0 iui=0
-ds_read_b128 v[vgprValuB_X0_I0+40:vgprValuB_X0_I0+40+3], v[vgprLocalReadAddrB] offset:8832 // L -> Reg lro=0 swapByteOffset=0 ti=128 vIdx=1 eIdx=2 rIdx=0 oIdx=0 buffer=0 iui=0
-ds_read_b128 v[vgprValuB_X0_I0+44:vgprValuB_X0_I0+44+3], v[vgprLocalReadAddrB] offset:8896 // L -> Reg lro=0 swapByteOffset=0 ti=128 vIdx=1 eIdx=3 rIdx=0 oIdx=0 buffer=0 iui=0
-ds_read_b128 v[vgprValuB_X0_I0+48:vgprValuB_X0_I0+48+3], v[vgprLocalReadAddrB] offset:8960 // L -> Reg lro=0 swapByteOffset=0 ti=128 vIdx=1 eIdx=4 rIdx=0 oIdx=0 buffer=0 iui=0
-ds_read_b128 v[vgprValuB_X0_I0+52:vgprValuB_X0_I0+52+3], v[vgprLocalReadAddrB] offset:9024 // L -> Reg lro=0 swapByteOffset=0 ti=128 vIdx=1 eIdx=5 rIdx=0 oIdx=0 buffer=0 iui=0
-ds_read_b128 v[vgprValuB_X0_I0+56:vgprValuB_X0_I0+56+3], v[vgprLocalReadAddrB] offset:9088 // L -> Reg lro=0 swapByteOffset=0 ti=128 vIdx=1 eIdx=6 rIdx=0 oIdx=0 buffer=0 iui=0
-ds_read_b128 v[vgprValuB_X0_I0+60:vgprValuB_X0_I0+60+3], v[vgprLocalReadAddrB] offset:9152 // L -> Reg lro=0 swapByteOffset=0 ti=128 vIdx=1 eIdx=7 rIdx=0 oIdx=0 buffer=0 iui=0
-s_waitcnt lgkmcnt(0)                               // wait for prior local read local write old=0, new=0 newLW=0 newLR=0 for iteration == 0
+s_waitcnt lgkmcnt(1)                               // wait for prior local read local write old=0, new=0 newLW=0 newLR=0 for iteration == 0
 v_mfma_f32_16x16x16_f16 acc[0:3], v[vgprG2LA+16+0:vgprG2LA+16+0+1], v[vgprValuB_X0_I0+0+0+0:vgprValuB_X0_I0+0+0+0+1], acc[0:3] // left value = acc[0+0:3+0]
 /*  mfmaIndex:1  */
 /* localReadsVacancy: latencyLeft 2 */
@@ -6138,7 +6208,8 @@ v_mfma_f32_16x16x16_f16 acc[12:15], v[vgprG2LA+28+0:vgprG2LA+28+0+1], v[vgprValu
 /*  mfmaIndex:4  */
 /* localReadsVacancy: latencyLeft 2 */
 s_add_u32 s[sgprSrdA+0], s[sgprSrdA+0], s28        // gra SRD += inc(lower)
-s_waitcnt lgkmcnt(15)                              // wait for prior local read local write
+ds_read_b128 v[vgprValuB_X0_I0+8:vgprValuB_X0_I0+8+3], v[vgprLocalReadAddrB] offset:128 // L -> Reg lro=0 swapByteOffset=0 ti=128 vIdx=0 eIdx=2 rIdx=0 oIdx=0 buffer=0 iui=0
+s_waitcnt lgkmcnt(1)                               // wait for prior local read local write old=0, new=0 newLW=0 newLR=0 for iteration == 0
 v_mfma_f32_16x16x16_f16 acc[16:19], v[vgprG2LA+16+0:vgprG2LA+16+0+1], v[vgprValuB_X0_I0+4+0+0:vgprValuB_X0_I0+4+0+0+1], acc[16:19] // left value = acc[16+0:19+0]
 /*  mfmaIndex:5  */
 /* localReadsVacancy: latencyLeft 2 */
@@ -6155,6 +6226,8 @@ v_mfma_f32_16x16x16_f16 acc[28:31], v[vgprG2LA+28+0:vgprG2LA+28+0+1], v[vgprValu
 /*  mfmaIndex:8  */
 /* localReadsVacancy: latencyLeft 2 */
 s_cmp_eq_u32 s[sgprShadowLimitA+1], 0              // are we within 2^32?
+ds_read_b128 v[vgprValuB_X0_I0+12:vgprValuB_X0_I0+12+3], v[vgprLocalReadAddrB] offset:192 // L -> Reg lro=0 swapByteOffset=0 ti=128 vIdx=0 eIdx=3 rIdx=0 oIdx=0 buffer=0 iui=0
+s_waitcnt lgkmcnt(1)                               // wait for prior local read local write old=0, new=0 newLW=0 newLR=0 for iteration == 0
 v_mfma_f32_16x16x16_f16 acc[32:35], v[vgprG2LA+16+0:vgprG2LA+16+0+1], v[vgprValuB_X0_I0+8+0+0:vgprValuB_X0_I0+8+0+0+1], acc[32:35] // left value = acc[32+0:35+0]
 /*  mfmaIndex:9  */
 /* localReadsVacancy: latencyLeft 2 */
@@ -6168,6 +6241,8 @@ v_mfma_f32_16x16x16_f16 acc[40:43], v[vgprG2LA+24+0:vgprG2LA+24+0+1], v[vgprValu
 v_mfma_f32_16x16x16_f16 acc[44:47], v[vgprG2LA+28+0:vgprG2LA+28+0+1], v[vgprValuB_X0_I0+8+0+0:vgprValuB_X0_I0+8+0+0+1], acc[44:47] // left value = acc[44+0:47+0]
 /*  mfmaIndex:12  */
 /* localReadsVacancy: latencyLeft 2 */
+ds_read_b128 v[vgprValuB_X0_I0+16:vgprValuB_X0_I0+16+3], v[vgprLocalReadAddrB] offset:256 // L -> Reg lro=0 swapByteOffset=0 ti=128 vIdx=0 eIdx=4 rIdx=0 oIdx=0 buffer=0 iui=0
+s_waitcnt lgkmcnt(1)                               // wait for prior local read local write old=0, new=0 newLW=0 newLR=0 for iteration == 0
 v_mfma_f32_16x16x16_f16 acc[48:51], v[vgprG2LA+16+0:vgprG2LA+16+0+1], v[vgprValuB_X0_I0+12+0+0:vgprValuB_X0_I0+12+0+0+1], acc[48:51] // left value = acc[48+0:51+0]
 /*  mfmaIndex:13  */
 /* localReadsVacancy: latencyLeft 2 */
@@ -6180,6 +6255,8 @@ v_mfma_f32_16x16x16_f16 acc[56:59], v[vgprG2LA+24+0:vgprG2LA+24+0+1], v[vgprValu
 v_mfma_f32_16x16x16_f16 acc[60:63], v[vgprG2LA+28+0:vgprG2LA+28+0+1], v[vgprValuB_X0_I0+12+0+0:vgprValuB_X0_I0+12+0+0+1], acc[60:63] // left value = acc[60+0:63+0]
 /*  mfmaIndex:16  */
 /* localReadsVacancy: latencyLeft 2 */
+ds_read_b128 v[vgprValuB_X0_I0+20:vgprValuB_X0_I0+20+3], v[vgprLocalReadAddrB] offset:320 // L -> Reg lro=0 swapByteOffset=0 ti=128 vIdx=0 eIdx=5 rIdx=0 oIdx=0 buffer=0 iui=0
+s_waitcnt lgkmcnt(1)                               // wait for prior local read local write old=0, new=0 newLW=0 newLR=0 for iteration == 0
 v_mfma_f32_16x16x16_f16 acc[64:67], v[vgprG2LA+16+0:vgprG2LA+16+0+1], v[vgprValuB_X0_I0+16+0+0:vgprValuB_X0_I0+16+0+0+1], acc[64:67] // left value = acc[64+0:67+0]
 /*  mfmaIndex:17  */
 /* localReadsVacancy: latencyLeft 2 */
@@ -6192,6 +6269,8 @@ v_mfma_f32_16x16x16_f16 acc[72:75], v[vgprG2LA+24+0:vgprG2LA+24+0+1], v[vgprValu
 v_mfma_f32_16x16x16_f16 acc[76:79], v[vgprG2LA+28+0:vgprG2LA+28+0+1], v[vgprValuB_X0_I0+16+0+0:vgprValuB_X0_I0+16+0+0+1], acc[76:79] // left value = acc[76+0:79+0]
 /*  mfmaIndex:20  */
 /* localReadsVacancy: latencyLeft 2 */
+ds_read_b128 v[vgprValuB_X0_I0+24:vgprValuB_X0_I0+24+3], v[vgprLocalReadAddrB] offset:384 // L -> Reg lro=0 swapByteOffset=0 ti=128 vIdx=0 eIdx=6 rIdx=0 oIdx=0 buffer=0 iui=0
+s_waitcnt lgkmcnt(1)                               // wait for prior local read local write old=0, new=0 newLW=0 newLR=0 for iteration == 0
 v_mfma_f32_16x16x16_f16 acc[80:83], v[vgprG2LA+16+0:vgprG2LA+16+0+1], v[vgprValuB_X0_I0+20+0+0:vgprValuB_X0_I0+20+0+0+1], acc[80:83] // left value = acc[80+0:83+0]
 /*  mfmaIndex:21  */
 /* localReadsVacancy: latencyLeft 2 */
@@ -6204,6 +6283,8 @@ v_mfma_f32_16x16x16_f16 acc[88:91], v[vgprG2LA+24+0:vgprG2LA+24+0+1], v[vgprValu
 v_mfma_f32_16x16x16_f16 acc[92:95], v[vgprG2LA+28+0:vgprG2LA+28+0+1], v[vgprValuB_X0_I0+20+0+0:vgprValuB_X0_I0+20+0+0+1], acc[92:95] // left value = acc[92+0:95+0]
 /*  mfmaIndex:24  */
 /* localReadsVacancy: latencyLeft 2 */
+ds_read_b128 v[vgprValuB_X0_I0+28:vgprValuB_X0_I0+28+3], v[vgprLocalReadAddrB] offset:448 // L -> Reg lro=0 swapByteOffset=0 ti=128 vIdx=0 eIdx=7 rIdx=0 oIdx=0 buffer=0 iui=0
+s_waitcnt lgkmcnt(1)                               // wait for prior local read local write old=0, new=0 newLW=0 newLR=0 for iteration == 0
 v_mfma_f32_16x16x16_f16 acc[96:99], v[vgprG2LA+16+0:vgprG2LA+16+0+1], v[vgprValuB_X0_I0+24+0+0:vgprValuB_X0_I0+24+0+0+1], acc[96:99] // left value = acc[96+0:99+0]
 /*  mfmaIndex:25  */
 /* localReadsVacancy: latencyLeft 2 */
@@ -6216,6 +6297,8 @@ v_mfma_f32_16x16x16_f16 acc[104:107], v[vgprG2LA+24+0:vgprG2LA+24+0+1], v[vgprVa
 v_mfma_f32_16x16x16_f16 acc[108:111], v[vgprG2LA+28+0:vgprG2LA+28+0+1], v[vgprValuB_X0_I0+24+0+0:vgprValuB_X0_I0+24+0+0+1], acc[108:111] // left value = acc[108+0:111+0]
 /*  mfmaIndex:28  */
 /* localReadsVacancy: latencyLeft 2 */
+ds_read_b128 v[vgprValuB_X0_I0+32:vgprValuB_X0_I0+32+3], v[vgprLocalReadAddrB] offset:8704 // L -> Reg lro=0 swapByteOffset=0 ti=128 vIdx=1 eIdx=0 rIdx=0 oIdx=0 buffer=0 iui=0
+s_waitcnt lgkmcnt(1)                               // wait for prior local read local write old=0, new=0 newLW=0 newLR=0 for iteration == 0
 v_mfma_f32_16x16x16_f16 acc[112:115], v[vgprG2LA+16+0:vgprG2LA+16+0+1], v[vgprValuB_X0_I0+28+0+0:vgprValuB_X0_I0+28+0+0+1], acc[112:115] // left value = acc[112+0:115+0]
 /*  mfmaIndex:29  */
 /* localReadsVacancy: latencyLeft 2 */
@@ -6228,6 +6311,8 @@ v_mfma_f32_16x16x16_f16 acc[120:123], v[vgprG2LA+24+0:vgprG2LA+24+0+1], v[vgprVa
 v_mfma_f32_16x16x16_f16 acc[124:127], v[vgprG2LA+28+0:vgprG2LA+28+0+1], v[vgprValuB_X0_I0+28+0+0:vgprValuB_X0_I0+28+0+0+1], acc[124:127] // left value = acc[124+0:127+0]
 /*  mfmaIndex:32  */
 /* localReadsVacancy: latencyLeft 2 */
+ds_read_b128 v[vgprValuB_X0_I0+36:vgprValuB_X0_I0+36+3], v[vgprLocalReadAddrB] offset:8768 // L -> Reg lro=0 swapByteOffset=0 ti=128 vIdx=1 eIdx=1 rIdx=0 oIdx=0 buffer=0 iui=0
+s_waitcnt lgkmcnt(1)                               // wait for prior local read local write old=0, new=0 newLW=0 newLR=0 for iteration == 0
 v_mfma_f32_16x16x16_f16 acc[128:131], v[vgprG2LA+16+0:vgprG2LA+16+0+1], v[vgprValuB_X0_I0+32+0+0:vgprValuB_X0_I0+32+0+0+1], acc[128:131] // left value = acc[128+0:131+0]
 /*  mfmaIndex:33  */
 /* localReadsVacancy: latencyLeft 2 */
@@ -6240,6 +6325,8 @@ v_mfma_f32_16x16x16_f16 acc[136:139], v[vgprG2LA+24+0:vgprG2LA+24+0+1], v[vgprVa
 v_mfma_f32_16x16x16_f16 acc[140:143], v[vgprG2LA+28+0:vgprG2LA+28+0+1], v[vgprValuB_X0_I0+32+0+0:vgprValuB_X0_I0+32+0+0+1], acc[140:143] // left value = acc[140+0:143+0]
 /*  mfmaIndex:36  */
 /* localReadsVacancy: latencyLeft 2 */
+ds_read_b128 v[vgprValuB_X0_I0+40:vgprValuB_X0_I0+40+3], v[vgprLocalReadAddrB] offset:8832 // L -> Reg lro=0 swapByteOffset=0 ti=128 vIdx=1 eIdx=2 rIdx=0 oIdx=0 buffer=0 iui=0
+s_waitcnt lgkmcnt(1)                               // wait for prior local read local write old=0, new=0 newLW=0 newLR=0 for iteration == 0
 v_mfma_f32_16x16x16_f16 acc[144:147], v[vgprG2LA+16+0:vgprG2LA+16+0+1], v[vgprValuB_X0_I0+36+0+0:vgprValuB_X0_I0+36+0+0+1], acc[144:147] // left value = acc[144+0:147+0]
 /*  mfmaIndex:37  */
 /* localReadsVacancy: latencyLeft 2 */
@@ -6252,6 +6339,8 @@ v_mfma_f32_16x16x16_f16 acc[152:155], v[vgprG2LA+24+0:vgprG2LA+24+0+1], v[vgprVa
 v_mfma_f32_16x16x16_f16 acc[156:159], v[vgprG2LA+28+0:vgprG2LA+28+0+1], v[vgprValuB_X0_I0+36+0+0:vgprValuB_X0_I0+36+0+0+1], acc[156:159] // left value = acc[156+0:159+0]
 /*  mfmaIndex:40  */
 /* localReadsVacancy: latencyLeft 2 */
+ds_read_b128 v[vgprValuB_X0_I0+44:vgprValuB_X0_I0+44+3], v[vgprLocalReadAddrB] offset:8896 // L -> Reg lro=0 swapByteOffset=0 ti=128 vIdx=1 eIdx=3 rIdx=0 oIdx=0 buffer=0 iui=0
+s_waitcnt lgkmcnt(1)                               // wait for prior local read local write old=0, new=0 newLW=0 newLR=0 for iteration == 0
 v_mfma_f32_16x16x16_f16 acc[160:163], v[vgprG2LA+16+0:vgprG2LA+16+0+1], v[vgprValuB_X0_I0+40+0+0:vgprValuB_X0_I0+40+0+0+1], acc[160:163] // left value = acc[160+0:163+0]
 /*  mfmaIndex:41  */
 /* localReadsVacancy: latencyLeft 2 */
@@ -6264,6 +6353,8 @@ v_mfma_f32_16x16x16_f16 acc[168:171], v[vgprG2LA+24+0:vgprG2LA+24+0+1], v[vgprVa
 v_mfma_f32_16x16x16_f16 acc[172:175], v[vgprG2LA+28+0:vgprG2LA+28+0+1], v[vgprValuB_X0_I0+40+0+0:vgprValuB_X0_I0+40+0+0+1], acc[172:175] // left value = acc[172+0:175+0]
 /*  mfmaIndex:44  */
 /* localReadsVacancy: latencyLeft 2 */
+ds_read_b128 v[vgprValuB_X0_I0+48:vgprValuB_X0_I0+48+3], v[vgprLocalReadAddrB] offset:8960 // L -> Reg lro=0 swapByteOffset=0 ti=128 vIdx=1 eIdx=4 rIdx=0 oIdx=0 buffer=0 iui=0
+s_waitcnt lgkmcnt(1)                               // wait for prior local read local write old=0, new=0 newLW=0 newLR=0 for iteration == 0
 v_mfma_f32_16x16x16_f16 acc[176:179], v[vgprG2LA+16+0:vgprG2LA+16+0+1], v[vgprValuB_X0_I0+44+0+0:vgprValuB_X0_I0+44+0+0+1], acc[176:179] // left value = acc[176+0:179+0]
 /*  mfmaIndex:45  */
 /* localReadsVacancy: latencyLeft 2 */
@@ -6276,6 +6367,8 @@ v_mfma_f32_16x16x16_f16 acc[184:187], v[vgprG2LA+24+0:vgprG2LA+24+0+1], v[vgprVa
 v_mfma_f32_16x16x16_f16 acc[188:191], v[vgprG2LA+28+0:vgprG2LA+28+0+1], v[vgprValuB_X0_I0+44+0+0:vgprValuB_X0_I0+44+0+0+1], acc[188:191] // left value = acc[188+0:191+0]
 /*  mfmaIndex:48  */
 /* localReadsVacancy: latencyLeft 2 */
+ds_read_b128 v[vgprValuB_X0_I0+52:vgprValuB_X0_I0+52+3], v[vgprLocalReadAddrB] offset:9024 // L -> Reg lro=0 swapByteOffset=0 ti=128 vIdx=1 eIdx=5 rIdx=0 oIdx=0 buffer=0 iui=0
+s_waitcnt lgkmcnt(1)                               // wait for prior local read local write old=0, new=0 newLW=0 newLR=0 for iteration == 0
 v_mfma_f32_16x16x16_f16 acc[192:195], v[vgprG2LA+16+0:vgprG2LA+16+0+1], v[vgprValuB_X0_I0+48+0+0:vgprValuB_X0_I0+48+0+0+1], acc[192:195] // left value = acc[192+0:195+0]
 /*  mfmaIndex:49  */
 /* localReadsVacancy: latencyLeft 2 */
@@ -6288,6 +6381,8 @@ v_mfma_f32_16x16x16_f16 acc[200:203], v[vgprG2LA+24+0:vgprG2LA+24+0+1], v[vgprVa
 v_mfma_f32_16x16x16_f16 acc[204:207], v[vgprG2LA+28+0:vgprG2LA+28+0+1], v[vgprValuB_X0_I0+48+0+0:vgprValuB_X0_I0+48+0+0+1], acc[204:207] // left value = acc[204+0:207+0]
 /*  mfmaIndex:52  */
 /* localReadsVacancy: latencyLeft 2 */
+ds_read_b128 v[vgprValuB_X0_I0+56:vgprValuB_X0_I0+56+3], v[vgprLocalReadAddrB] offset:9088 // L -> Reg lro=0 swapByteOffset=0 ti=128 vIdx=1 eIdx=6 rIdx=0 oIdx=0 buffer=0 iui=0
+s_waitcnt lgkmcnt(1)                               // wait for prior local read local write old=0, new=0 newLW=0 newLR=0 for iteration == 0
 v_mfma_f32_16x16x16_f16 acc[208:211], v[vgprG2LA+16+0:vgprG2LA+16+0+1], v[vgprValuB_X0_I0+52+0+0:vgprValuB_X0_I0+52+0+0+1], acc[208:211] // left value = acc[208+0:211+0]
 /*  mfmaIndex:53  */
 /* localReadsVacancy: latencyLeft 2 */
@@ -6300,6 +6395,8 @@ v_mfma_f32_16x16x16_f16 acc[216:219], v[vgprG2LA+24+0:vgprG2LA+24+0+1], v[vgprVa
 v_mfma_f32_16x16x16_f16 acc[220:223], v[vgprG2LA+28+0:vgprG2LA+28+0+1], v[vgprValuB_X0_I0+52+0+0:vgprValuB_X0_I0+52+0+0+1], acc[220:223] // left value = acc[220+0:223+0]
 /*  mfmaIndex:56  */
 /* localReadsVacancy: latencyLeft 2 */
+ds_read_b128 v[vgprValuB_X0_I0+60:vgprValuB_X0_I0+60+3], v[vgprLocalReadAddrB] offset:9152 // L -> Reg lro=0 swapByteOffset=0 ti=128 vIdx=1 eIdx=7 rIdx=0 oIdx=0 buffer=0 iui=0
+s_waitcnt lgkmcnt(1)                               // wait for prior local read local write old=0, new=0 newLW=0 newLR=0 for iteration == 0
 v_mfma_f32_16x16x16_f16 acc[224:227], v[vgprG2LA+16+0:vgprG2LA+16+0+1], v[vgprValuB_X0_I0+56+0+0:vgprValuB_X0_I0+56+0+0+1], acc[224:227] // left value = acc[224+0:227+0]
 /*  mfmaIndex:57  */
 /* localReadsVacancy: latencyLeft 2 */
@@ -6312,6 +6409,7 @@ v_mfma_f32_16x16x16_f16 acc[232:235], v[vgprG2LA+24+0:vgprG2LA+24+0+1], v[vgprVa
 v_mfma_f32_16x16x16_f16 acc[236:239], v[vgprG2LA+28+0:vgprG2LA+28+0+1], v[vgprValuB_X0_I0+56+0+0:vgprValuB_X0_I0+56+0+0+1], acc[236:239] // left value = acc[236+0:239+0]
 /*  mfmaIndex:60  */
 /* localReadsVacancy: latencyLeft 2 */
+s_waitcnt lgkmcnt(0)                               // wait for prior local read local write old=0, new=0 newLW=0 newLR=0 for iteration == 0
 v_mfma_f32_16x16x16_f16 acc[240:243], v[vgprG2LA+16+0:vgprG2LA+16+0+1], v[vgprValuB_X0_I0+60+0+0:vgprValuB_X0_I0+60+0+0+1], acc[240:243] // left value = acc[240+0:243+0]
 /*  mfmaIndex:61  */
 /* localReadsVacancy: latencyLeft 2 */
@@ -6331,7 +6429,6 @@ v_mfma_f32_16x16x16_f16 acc[252:255], v[vgprG2LA+28+0:vgprG2LA+28+0+1], v[vgprVa
 /*  numMfmaForLR:30, syncPlrMfmaIndex:0  */
 /*  mfmaIndex:64  */
 /* localReadsVacancy: latencyLeft 2 */
-s_waitcnt lgkmcnt(0)                               // wait for prior local read local write old=0, new=0 newLW=0 newLR=0
 v_mfma_f32_16x16x16_f16 acc[0:3], v[vgprG2LA+16+2:vgprG2LA+16+2+1], v[vgprValuB_X0_I0+0+2+0:vgprValuB_X0_I0+0+2+0+1], acc[0:3] // left value = acc[0+0:3+0]
 /*  mfmaIndex:65  */
 /* localReadsVacancy: latencyLeft 2 */
@@ -6542,21 +6639,7 @@ s_waitcnt vmcnt(0)                                 // global read wait for Direc
 /*  mfmaIndex:0  */
 ds_read_b128 v[vgprValuB_X0_I0+0:vgprValuB_X0_I0+0+3], v[vgprLocalReadAddrB] offset:0 // L -> Reg lro=0 swapByteOffset=0 ti=128 vIdx=0 eIdx=0 rIdx=0 oIdx=0 buffer=0 iui=0
 ds_read_b128 v[vgprValuB_X0_I0+4:vgprValuB_X0_I0+4+3], v[vgprLocalReadAddrB] offset:64 // L -> Reg lro=0 swapByteOffset=0 ti=128 vIdx=0 eIdx=1 rIdx=0 oIdx=0 buffer=0 iui=0
-ds_read_b128 v[vgprValuB_X0_I0+8:vgprValuB_X0_I0+8+3], v[vgprLocalReadAddrB] offset:128 // L -> Reg lro=0 swapByteOffset=0 ti=128 vIdx=0 eIdx=2 rIdx=0 oIdx=0 buffer=0 iui=0
-ds_read_b128 v[vgprValuB_X0_I0+12:vgprValuB_X0_I0+12+3], v[vgprLocalReadAddrB] offset:192 // L -> Reg lro=0 swapByteOffset=0 ti=128 vIdx=0 eIdx=3 rIdx=0 oIdx=0 buffer=0 iui=0
-ds_read_b128 v[vgprValuB_X0_I0+16:vgprValuB_X0_I0+16+3], v[vgprLocalReadAddrB] offset:256 // L -> Reg lro=0 swapByteOffset=0 ti=128 vIdx=0 eIdx=4 rIdx=0 oIdx=0 buffer=0 iui=0
-ds_read_b128 v[vgprValuB_X0_I0+20:vgprValuB_X0_I0+20+3], v[vgprLocalReadAddrB] offset:320 // L -> Reg lro=0 swapByteOffset=0 ti=128 vIdx=0 eIdx=5 rIdx=0 oIdx=0 buffer=0 iui=0
-ds_read_b128 v[vgprValuB_X0_I0+24:vgprValuB_X0_I0+24+3], v[vgprLocalReadAddrB] offset:384 // L -> Reg lro=0 swapByteOffset=0 ti=128 vIdx=0 eIdx=6 rIdx=0 oIdx=0 buffer=0 iui=0
-ds_read_b128 v[vgprValuB_X0_I0+28:vgprValuB_X0_I0+28+3], v[vgprLocalReadAddrB] offset:448 // L -> Reg lro=0 swapByteOffset=0 ti=128 vIdx=0 eIdx=7 rIdx=0 oIdx=0 buffer=0 iui=0
-ds_read_b128 v[vgprValuB_X0_I0+32:vgprValuB_X0_I0+32+3], v[vgprLocalReadAddrB] offset:8704 // L -> Reg lro=0 swapByteOffset=0 ti=128 vIdx=1 eIdx=0 rIdx=0 oIdx=0 buffer=0 iui=0
-ds_read_b128 v[vgprValuB_X0_I0+36:vgprValuB_X0_I0+36+3], v[vgprLocalReadAddrB] offset:8768 // L -> Reg lro=0 swapByteOffset=0 ti=128 vIdx=1 eIdx=1 rIdx=0 oIdx=0 buffer=0 iui=0
-ds_read_b128 v[vgprValuB_X0_I0+40:vgprValuB_X0_I0+40+3], v[vgprLocalReadAddrB] offset:8832 // L -> Reg lro=0 swapByteOffset=0 ti=128 vIdx=1 eIdx=2 rIdx=0 oIdx=0 buffer=0 iui=0
-ds_read_b128 v[vgprValuB_X0_I0+44:vgprValuB_X0_I0+44+3], v[vgprLocalReadAddrB] offset:8896 // L -> Reg lro=0 swapByteOffset=0 ti=128 vIdx=1 eIdx=3 rIdx=0 oIdx=0 buffer=0 iui=0
-ds_read_b128 v[vgprValuB_X0_I0+48:vgprValuB_X0_I0+48+3], v[vgprLocalReadAddrB] offset:8960 // L -> Reg lro=0 swapByteOffset=0 ti=128 vIdx=1 eIdx=4 rIdx=0 oIdx=0 buffer=0 iui=0
-ds_read_b128 v[vgprValuB_X0_I0+52:vgprValuB_X0_I0+52+3], v[vgprLocalReadAddrB] offset:9024 // L -> Reg lro=0 swapByteOffset=0 ti=128 vIdx=1 eIdx=5 rIdx=0 oIdx=0 buffer=0 iui=0
-ds_read_b128 v[vgprValuB_X0_I0+56:vgprValuB_X0_I0+56+3], v[vgprLocalReadAddrB] offset:9088 // L -> Reg lro=0 swapByteOffset=0 ti=128 vIdx=1 eIdx=6 rIdx=0 oIdx=0 buffer=0 iui=0
-ds_read_b128 v[vgprValuB_X0_I0+60:vgprValuB_X0_I0+60+3], v[vgprLocalReadAddrB] offset:9152 // L -> Reg lro=0 swapByteOffset=0 ti=128 vIdx=1 eIdx=7 rIdx=0 oIdx=0 buffer=0 iui=0
-s_waitcnt lgkmcnt(0)                               // wait for prior local read local write old=0, new=0 newLW=0 newLR=0 for iteration == 0
+s_waitcnt lgkmcnt(1)                               // wait for prior local read local write old=0, new=0 newLW=0 newLR=0 for iteration == 0
 v_mfma_f32_16x16x16_f16 acc[0:3], v[vgprG2LA+0+0:vgprG2LA+0+0+1], v[vgprValuB_X0_I0+0+0+0:vgprValuB_X0_I0+0+0+0+1], acc[0:3] // left value = acc[0+0:3+0]
 /*  mfmaIndex:1  */
 /* localReadsVacancy: latencyLeft 2 */
@@ -6575,7 +6658,8 @@ v_mfma_f32_16x16x16_f16 acc[12:15], v[vgprG2LA+12+0:vgprG2LA+12+0+1], v[vgprValu
 /*  mfmaIndex:4  */
 /* localReadsVacancy: latencyLeft 2 */
 s_add_u32 s[sgprSrdA+0], s[sgprSrdA+0], s28        // gra SRD += inc(lower)
-s_waitcnt lgkmcnt(15)                              // wait for prior local read local write
+ds_read_b128 v[vgprValuB_X0_I0+8:vgprValuB_X0_I0+8+3], v[vgprLocalReadAddrB] offset:128 // L -> Reg lro=0 swapByteOffset=0 ti=128 vIdx=0 eIdx=2 rIdx=0 oIdx=0 buffer=0 iui=0
+s_waitcnt lgkmcnt(1)                               // wait for prior local read local write old=0, new=0 newLW=0 newLR=0 for iteration == 0
 v_mfma_f32_16x16x16_f16 acc[16:19], v[vgprG2LA+0+0:vgprG2LA+0+0+1], v[vgprValuB_X0_I0+4+0+0:vgprValuB_X0_I0+4+0+0+1], acc[16:19] // left value = acc[16+0:19+0]
 /*  mfmaIndex:5  */
 /* localReadsVacancy: latencyLeft 2 */
@@ -6592,6 +6676,8 @@ v_mfma_f32_16x16x16_f16 acc[28:31], v[vgprG2LA+12+0:vgprG2LA+12+0+1], v[vgprValu
 /*  mfmaIndex:8  */
 /* localReadsVacancy: latencyLeft 2 */
 s_cmp_eq_u32 s[sgprShadowLimitA+1], 0              // are we within 2^32?
+ds_read_b128 v[vgprValuB_X0_I0+12:vgprValuB_X0_I0+12+3], v[vgprLocalReadAddrB] offset:192 // L -> Reg lro=0 swapByteOffset=0 ti=128 vIdx=0 eIdx=3 rIdx=0 oIdx=0 buffer=0 iui=0
+s_waitcnt lgkmcnt(1)                               // wait for prior local read local write old=0, new=0 newLW=0 newLR=0 for iteration == 0
 v_mfma_f32_16x16x16_f16 acc[32:35], v[vgprG2LA+0+0:vgprG2LA+0+0+1], v[vgprValuB_X0_I0+8+0+0:vgprValuB_X0_I0+8+0+0+1], acc[32:35] // left value = acc[32+0:35+0]
 /*  mfmaIndex:9  */
 /* localReadsVacancy: latencyLeft 2 */
@@ -6605,6 +6691,8 @@ v_mfma_f32_16x16x16_f16 acc[40:43], v[vgprG2LA+8+0:vgprG2LA+8+0+1], v[vgprValuB_
 v_mfma_f32_16x16x16_f16 acc[44:47], v[vgprG2LA+12+0:vgprG2LA+12+0+1], v[vgprValuB_X0_I0+8+0+0:vgprValuB_X0_I0+8+0+0+1], acc[44:47] // left value = acc[44+0:47+0]
 /*  mfmaIndex:12  */
 /* localReadsVacancy: latencyLeft 2 */
+ds_read_b128 v[vgprValuB_X0_I0+16:vgprValuB_X0_I0+16+3], v[vgprLocalReadAddrB] offset:256 // L -> Reg lro=0 swapByteOffset=0 ti=128 vIdx=0 eIdx=4 rIdx=0 oIdx=0 buffer=0 iui=0
+s_waitcnt lgkmcnt(1)                               // wait for prior local read local write old=0, new=0 newLW=0 newLR=0 for iteration == 0
 v_mfma_f32_16x16x16_f16 acc[48:51], v[vgprG2LA+0+0:vgprG2LA+0+0+1], v[vgprValuB_X0_I0+12+0+0:vgprValuB_X0_I0+12+0+0+1], acc[48:51] // left value = acc[48+0:51+0]
 /*  mfmaIndex:13  */
 /* localReadsVacancy: latencyLeft 2 */
@@ -6617,6 +6705,8 @@ v_mfma_f32_16x16x16_f16 acc[56:59], v[vgprG2LA+8+0:vgprG2LA+8+0+1], v[vgprValuB_
 v_mfma_f32_16x16x16_f16 acc[60:63], v[vgprG2LA+12+0:vgprG2LA+12+0+1], v[vgprValuB_X0_I0+12+0+0:vgprValuB_X0_I0+12+0+0+1], acc[60:63] // left value = acc[60+0:63+0]
 /*  mfmaIndex:16  */
 /* localReadsVacancy: latencyLeft 2 */
+ds_read_b128 v[vgprValuB_X0_I0+20:vgprValuB_X0_I0+20+3], v[vgprLocalReadAddrB] offset:320 // L -> Reg lro=0 swapByteOffset=0 ti=128 vIdx=0 eIdx=5 rIdx=0 oIdx=0 buffer=0 iui=0
+s_waitcnt lgkmcnt(1)                               // wait for prior local read local write old=0, new=0 newLW=0 newLR=0 for iteration == 0
 v_mfma_f32_16x16x16_f16 acc[64:67], v[vgprG2LA+0+0:vgprG2LA+0+0+1], v[vgprValuB_X0_I0+16+0+0:vgprValuB_X0_I0+16+0+0+1], acc[64:67] // left value = acc[64+0:67+0]
 /*  mfmaIndex:17  */
 /* localReadsVacancy: latencyLeft 2 */
@@ -6629,6 +6719,8 @@ v_mfma_f32_16x16x16_f16 acc[72:75], v[vgprG2LA+8+0:vgprG2LA+8+0+1], v[vgprValuB_
 v_mfma_f32_16x16x16_f16 acc[76:79], v[vgprG2LA+12+0:vgprG2LA+12+0+1], v[vgprValuB_X0_I0+16+0+0:vgprValuB_X0_I0+16+0+0+1], acc[76:79] // left value = acc[76+0:79+0]
 /*  mfmaIndex:20  */
 /* localReadsVacancy: latencyLeft 2 */
+ds_read_b128 v[vgprValuB_X0_I0+24:vgprValuB_X0_I0+24+3], v[vgprLocalReadAddrB] offset:384 // L -> Reg lro=0 swapByteOffset=0 ti=128 vIdx=0 eIdx=6 rIdx=0 oIdx=0 buffer=0 iui=0
+s_waitcnt lgkmcnt(1)                               // wait for prior local read local write old=0, new=0 newLW=0 newLR=0 for iteration == 0
 v_mfma_f32_16x16x16_f16 acc[80:83], v[vgprG2LA+0+0:vgprG2LA+0+0+1], v[vgprValuB_X0_I0+20+0+0:vgprValuB_X0_I0+20+0+0+1], acc[80:83] // left value = acc[80+0:83+0]
 /*  mfmaIndex:21  */
 /* localReadsVacancy: latencyLeft 2 */
@@ -6641,6 +6733,8 @@ v_mfma_f32_16x16x16_f16 acc[88:91], v[vgprG2LA+8+0:vgprG2LA+8+0+1], v[vgprValuB_
 v_mfma_f32_16x16x16_f16 acc[92:95], v[vgprG2LA+12+0:vgprG2LA+12+0+1], v[vgprValuB_X0_I0+20+0+0:vgprValuB_X0_I0+20+0+0+1], acc[92:95] // left value = acc[92+0:95+0]
 /*  mfmaIndex:24  */
 /* localReadsVacancy: latencyLeft 2 */
+ds_read_b128 v[vgprValuB_X0_I0+28:vgprValuB_X0_I0+28+3], v[vgprLocalReadAddrB] offset:448 // L -> Reg lro=0 swapByteOffset=0 ti=128 vIdx=0 eIdx=7 rIdx=0 oIdx=0 buffer=0 iui=0
+s_waitcnt lgkmcnt(1)                               // wait for prior local read local write old=0, new=0 newLW=0 newLR=0 for iteration == 0
 v_mfma_f32_16x16x16_f16 acc[96:99], v[vgprG2LA+0+0:vgprG2LA+0+0+1], v[vgprValuB_X0_I0+24+0+0:vgprValuB_X0_I0+24+0+0+1], acc[96:99] // left value = acc[96+0:99+0]
 /*  mfmaIndex:25  */
 /* localReadsVacancy: latencyLeft 2 */
@@ -6653,6 +6747,8 @@ v_mfma_f32_16x16x16_f16 acc[104:107], v[vgprG2LA+8+0:vgprG2LA+8+0+1], v[vgprValu
 v_mfma_f32_16x16x16_f16 acc[108:111], v[vgprG2LA+12+0:vgprG2LA+12+0+1], v[vgprValuB_X0_I0+24+0+0:vgprValuB_X0_I0+24+0+0+1], acc[108:111] // left value = acc[108+0:111+0]
 /*  mfmaIndex:28  */
 /* localReadsVacancy: latencyLeft 2 */
+ds_read_b128 v[vgprValuB_X0_I0+32:vgprValuB_X0_I0+32+3], v[vgprLocalReadAddrB] offset:8704 // L -> Reg lro=0 swapByteOffset=0 ti=128 vIdx=1 eIdx=0 rIdx=0 oIdx=0 buffer=0 iui=0
+s_waitcnt lgkmcnt(1)                               // wait for prior local read local write old=0, new=0 newLW=0 newLR=0 for iteration == 0
 v_mfma_f32_16x16x16_f16 acc[112:115], v[vgprG2LA+0+0:vgprG2LA+0+0+1], v[vgprValuB_X0_I0+28+0+0:vgprValuB_X0_I0+28+0+0+1], acc[112:115] // left value = acc[112+0:115+0]
 /*  mfmaIndex:29  */
 /* localReadsVacancy: latencyLeft 2 */
@@ -6665,6 +6761,8 @@ v_mfma_f32_16x16x16_f16 acc[120:123], v[vgprG2LA+8+0:vgprG2LA+8+0+1], v[vgprValu
 v_mfma_f32_16x16x16_f16 acc[124:127], v[vgprG2LA+12+0:vgprG2LA+12+0+1], v[vgprValuB_X0_I0+28+0+0:vgprValuB_X0_I0+28+0+0+1], acc[124:127] // left value = acc[124+0:127+0]
 /*  mfmaIndex:32  */
 /* localReadsVacancy: latencyLeft 2 */
+ds_read_b128 v[vgprValuB_X0_I0+36:vgprValuB_X0_I0+36+3], v[vgprLocalReadAddrB] offset:8768 // L -> Reg lro=0 swapByteOffset=0 ti=128 vIdx=1 eIdx=1 rIdx=0 oIdx=0 buffer=0 iui=0
+s_waitcnt lgkmcnt(1)                               // wait for prior local read local write old=0, new=0 newLW=0 newLR=0 for iteration == 0
 v_mfma_f32_16x16x16_f16 acc[128:131], v[vgprG2LA+0+0:vgprG2LA+0+0+1], v[vgprValuB_X0_I0+32+0+0:vgprValuB_X0_I0+32+0+0+1], acc[128:131] // left value = acc[128+0:131+0]
 /*  mfmaIndex:33  */
 /* localReadsVacancy: latencyLeft 2 */
@@ -6677,6 +6775,8 @@ v_mfma_f32_16x16x16_f16 acc[136:139], v[vgprG2LA+8+0:vgprG2LA+8+0+1], v[vgprValu
 v_mfma_f32_16x16x16_f16 acc[140:143], v[vgprG2LA+12+0:vgprG2LA+12+0+1], v[vgprValuB_X0_I0+32+0+0:vgprValuB_X0_I0+32+0+0+1], acc[140:143] // left value = acc[140+0:143+0]
 /*  mfmaIndex:36  */
 /* localReadsVacancy: latencyLeft 2 */
+ds_read_b128 v[vgprValuB_X0_I0+40:vgprValuB_X0_I0+40+3], v[vgprLocalReadAddrB] offset:8832 // L -> Reg lro=0 swapByteOffset=0 ti=128 vIdx=1 eIdx=2 rIdx=0 oIdx=0 buffer=0 iui=0
+s_waitcnt lgkmcnt(1)                               // wait for prior local read local write old=0, new=0 newLW=0 newLR=0 for iteration == 0
 v_mfma_f32_16x16x16_f16 acc[144:147], v[vgprG2LA+0+0:vgprG2LA+0+0+1], v[vgprValuB_X0_I0+36+0+0:vgprValuB_X0_I0+36+0+0+1], acc[144:147] // left value = acc[144+0:147+0]
 /*  mfmaIndex:37  */
 /* localReadsVacancy: latencyLeft 2 */
@@ -6689,6 +6789,8 @@ v_mfma_f32_16x16x16_f16 acc[152:155], v[vgprG2LA+8+0:vgprG2LA+8+0+1], v[vgprValu
 v_mfma_f32_16x16x16_f16 acc[156:159], v[vgprG2LA+12+0:vgprG2LA+12+0+1], v[vgprValuB_X0_I0+36+0+0:vgprValuB_X0_I0+36+0+0+1], acc[156:159] // left value = acc[156+0:159+0]
 /*  mfmaIndex:40  */
 /* localReadsVacancy: latencyLeft 2 */
+ds_read_b128 v[vgprValuB_X0_I0+44:vgprValuB_X0_I0+44+3], v[vgprLocalReadAddrB] offset:8896 // L -> Reg lro=0 swapByteOffset=0 ti=128 vIdx=1 eIdx=3 rIdx=0 oIdx=0 buffer=0 iui=0
+s_waitcnt lgkmcnt(1)                               // wait for prior local read local write old=0, new=0 newLW=0 newLR=0 for iteration == 0
 v_mfma_f32_16x16x16_f16 acc[160:163], v[vgprG2LA+0+0:vgprG2LA+0+0+1], v[vgprValuB_X0_I0+40+0+0:vgprValuB_X0_I0+40+0+0+1], acc[160:163] // left value = acc[160+0:163+0]
 /*  mfmaIndex:41  */
 /* localReadsVacancy: latencyLeft 2 */
@@ -6701,6 +6803,8 @@ v_mfma_f32_16x16x16_f16 acc[168:171], v[vgprG2LA+8+0:vgprG2LA+8+0+1], v[vgprValu
 v_mfma_f32_16x16x16_f16 acc[172:175], v[vgprG2LA+12+0:vgprG2LA+12+0+1], v[vgprValuB_X0_I0+40+0+0:vgprValuB_X0_I0+40+0+0+1], acc[172:175] // left value = acc[172+0:175+0]
 /*  mfmaIndex:44  */
 /* localReadsVacancy: latencyLeft 2 */
+ds_read_b128 v[vgprValuB_X0_I0+48:vgprValuB_X0_I0+48+3], v[vgprLocalReadAddrB] offset:8960 // L -> Reg lro=0 swapByteOffset=0 ti=128 vIdx=1 eIdx=4 rIdx=0 oIdx=0 buffer=0 iui=0
+s_waitcnt lgkmcnt(1)                               // wait for prior local read local write old=0, new=0 newLW=0 newLR=0 for iteration == 0
 v_mfma_f32_16x16x16_f16 acc[176:179], v[vgprG2LA+0+0:vgprG2LA+0+0+1], v[vgprValuB_X0_I0+44+0+0:vgprValuB_X0_I0+44+0+0+1], acc[176:179] // left value = acc[176+0:179+0]
 /*  mfmaIndex:45  */
 /* localReadsVacancy: latencyLeft 2 */
@@ -6713,6 +6817,8 @@ v_mfma_f32_16x16x16_f16 acc[184:187], v[vgprG2LA+8+0:vgprG2LA+8+0+1], v[vgprValu
 v_mfma_f32_16x16x16_f16 acc[188:191], v[vgprG2LA+12+0:vgprG2LA+12+0+1], v[vgprValuB_X0_I0+44+0+0:vgprValuB_X0_I0+44+0+0+1], acc[188:191] // left value = acc[188+0:191+0]
 /*  mfmaIndex:48  */
 /* localReadsVacancy: latencyLeft 2 */
+ds_read_b128 v[vgprValuB_X0_I0+52:vgprValuB_X0_I0+52+3], v[vgprLocalReadAddrB] offset:9024 // L -> Reg lro=0 swapByteOffset=0 ti=128 vIdx=1 eIdx=5 rIdx=0 oIdx=0 buffer=0 iui=0
+s_waitcnt lgkmcnt(1)                               // wait for prior local read local write old=0, new=0 newLW=0 newLR=0 for iteration == 0
 v_mfma_f32_16x16x16_f16 acc[192:195], v[vgprG2LA+0+0:vgprG2LA+0+0+1], v[vgprValuB_X0_I0+48+0+0:vgprValuB_X0_I0+48+0+0+1], acc[192:195] // left value = acc[192+0:195+0]
 /*  mfmaIndex:49  */
 /* localReadsVacancy: latencyLeft 2 */
@@ -6725,6 +6831,8 @@ v_mfma_f32_16x16x16_f16 acc[200:203], v[vgprG2LA+8+0:vgprG2LA+8+0+1], v[vgprValu
 v_mfma_f32_16x16x16_f16 acc[204:207], v[vgprG2LA+12+0:vgprG2LA+12+0+1], v[vgprValuB_X0_I0+48+0+0:vgprValuB_X0_I0+48+0+0+1], acc[204:207] // left value = acc[204+0:207+0]
 /*  mfmaIndex:52  */
 /* localReadsVacancy: latencyLeft 2 */
+ds_read_b128 v[vgprValuB_X0_I0+56:vgprValuB_X0_I0+56+3], v[vgprLocalReadAddrB] offset:9088 // L -> Reg lro=0 swapByteOffset=0 ti=128 vIdx=1 eIdx=6 rIdx=0 oIdx=0 buffer=0 iui=0
+s_waitcnt lgkmcnt(1)                               // wait for prior local read local write old=0, new=0 newLW=0 newLR=0 for iteration == 0
 v_mfma_f32_16x16x16_f16 acc[208:211], v[vgprG2LA+0+0:vgprG2LA+0+0+1], v[vgprValuB_X0_I0+52+0+0:vgprValuB_X0_I0+52+0+0+1], acc[208:211] // left value = acc[208+0:211+0]
 /*  mfmaIndex:53  */
 /* localReadsVacancy: latencyLeft 2 */
@@ -6737,6 +6845,8 @@ v_mfma_f32_16x16x16_f16 acc[216:219], v[vgprG2LA+8+0:vgprG2LA+8+0+1], v[vgprValu
 v_mfma_f32_16x16x16_f16 acc[220:223], v[vgprG2LA+12+0:vgprG2LA+12+0+1], v[vgprValuB_X0_I0+52+0+0:vgprValuB_X0_I0+52+0+0+1], acc[220:223] // left value = acc[220+0:223+0]
 /*  mfmaIndex:56  */
 /* localReadsVacancy: latencyLeft 2 */
+ds_read_b128 v[vgprValuB_X0_I0+60:vgprValuB_X0_I0+60+3], v[vgprLocalReadAddrB] offset:9152 // L -> Reg lro=0 swapByteOffset=0 ti=128 vIdx=1 eIdx=7 rIdx=0 oIdx=0 buffer=0 iui=0
+s_waitcnt lgkmcnt(1)                               // wait for prior local read local write old=0, new=0 newLW=0 newLR=0 for iteration == 0
 v_mfma_f32_16x16x16_f16 acc[224:227], v[vgprG2LA+0+0:vgprG2LA+0+0+1], v[vgprValuB_X0_I0+56+0+0:vgprValuB_X0_I0+56+0+0+1], acc[224:227] // left value = acc[224+0:227+0]
 /*  mfmaIndex:57  */
 /* localReadsVacancy: latencyLeft 2 */
@@ -6749,6 +6859,7 @@ v_mfma_f32_16x16x16_f16 acc[232:235], v[vgprG2LA+8+0:vgprG2LA+8+0+1], v[vgprValu
 v_mfma_f32_16x16x16_f16 acc[236:239], v[vgprG2LA+12+0:vgprG2LA+12+0+1], v[vgprValuB_X0_I0+56+0+0:vgprValuB_X0_I0+56+0+0+1], acc[236:239] // left value = acc[236+0:239+0]
 /*  mfmaIndex:60  */
 /* localReadsVacancy: latencyLeft 2 */
+s_waitcnt lgkmcnt(0)                               // wait for prior local read local write old=0, new=0 newLW=0 newLR=0 for iteration == 0
 v_mfma_f32_16x16x16_f16 acc[240:243], v[vgprG2LA+0+0:vgprG2LA+0+0+1], v[vgprValuB_X0_I0+60+0+0:vgprValuB_X0_I0+60+0+0+1], acc[240:243] // left value = acc[240+0:243+0]
 /*  mfmaIndex:61  */
 /* localReadsVacancy: latencyLeft 2 */
@@ -6768,7 +6879,6 @@ v_mfma_f32_16x16x16_f16 acc[252:255], v[vgprG2LA+12+0:vgprG2LA+12+0+1], v[vgprVa
 /*  numMfmaForLR:30, syncPlrMfmaIndex:0  */
 /*  mfmaIndex:64  */
 /* localReadsVacancy: latencyLeft 2 */
-s_waitcnt lgkmcnt(0)                               // wait for prior local read local write old=0, new=0 newLW=0 newLR=0
 v_mfma_f32_16x16x16_f16 acc[0:3], v[vgprG2LA+0+2:vgprG2LA+0+2+1], v[vgprValuB_X0_I0+0+2+0:vgprValuB_X0_I0+0+2+0+1], acc[0:3] // left value = acc[0+0:3+0]
 /*  mfmaIndex:65  */
 /* localReadsVacancy: latencyLeft 2 */
