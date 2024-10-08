@@ -65,8 +65,10 @@ custom.config:
   1LDSBuffer: 0
   ScheduleIterAlg: 3
   DepthU: 64
-  StaggerU: 0
+  StaggerU: 8
+  StaggerUStride: 256
   WorkGroupMapping: 8
+  WorkGroupMappingXCC: 8
   WaveSeparateGlobalReadA: 1
   WaveSeparateGlobalReadB: 1
   GlobalReadVectorWidthA: 8
