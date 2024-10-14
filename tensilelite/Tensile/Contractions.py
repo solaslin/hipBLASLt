@@ -258,8 +258,8 @@ class ProblemType:
         if 'SupportUserArgs' in d:
             rv.supportDeviceUserArguments = d['SupportUserArgs']
 
-        rv.swizzleTensorA = d['SwizzleTensorA']
-        rv.swizzleTensorB = d['SwizzleTensorB']
+        rv.swizzleTensorA = d.get('SwizzleTensorA', False)
+        rv.swizzleTensorB = d.get('SwizzleTensorB', False)
         return rv
 
     def __init__(self, freeIndices=None, batchIndices=None, boundIndices=None, aDims=None, bDims=None, cDims=None, dDims=None):
