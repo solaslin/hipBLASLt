@@ -1919,11 +1919,8 @@ class Solution(collections.abc.Mapping):
       return False
 
     # Reject TLU = UnrollMajorLDS
-    if tc == 'A' and (state["ProblemType"]["TLUA"] == state["UnrollMajorLDSA"]):
-      reject(state, "DirectToVgprA does not supports TLUA = UnrollMajorLDSA")
-      return False
-    if tc == 'B' and (state["ProblemType"]["TLUB"] == state["UnrollMajorLDSB"]):
-      reject(state, "DirectToVgprB does not supports TLUB = UnrollMajorLDSB")
+    if state["ProblemType"]["TLU%c"%tc] == state["UnrollMajorLDS%c"%tc]:
+      reject(state, "DirectToVgpr%c does not supports TLU%c = UnrollMajorLDS%c"%(tc, tc, tc))
       return False
 
     # does not work with UnrollLoopSwapGlobalReadOrder
