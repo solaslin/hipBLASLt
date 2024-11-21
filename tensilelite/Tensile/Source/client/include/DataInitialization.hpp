@@ -304,6 +304,8 @@ namespace TensileLite
 
                 hipMemcpyKind kind;
 
+                bool needSwizzle = problem.swizzleTensorA() || problem.swizzleTensorB();
+
                 if(m_keepPristineCopyOnGPU && !m_problemDependentData)
                 {
                     // use gpu pristine
@@ -316,7 +318,7 @@ namespace TensileLite
                 }
 
                 if(m_gpuInit && m_curBoundsCheck == BoundsCheckMode::Disable
-                   && !m_problemDependentData)
+                   && !m_problemDependentData && !needSwizzle)
                 {
                     if(m_elementsToValidate)
                     {
@@ -335,7 +337,7 @@ namespace TensileLite
                         initializeCPUInputs(problem);
                     if(m_problemDependentData)
                         copyValidToGPUBuffer(problem);
-                    if(problem.swizzleTensorA() || problem.swizzleTensorB())
+                    if(needSwizzle)
                         copySwizzledToGPUBuffer(problem);
 
                     // gpu to gpu
