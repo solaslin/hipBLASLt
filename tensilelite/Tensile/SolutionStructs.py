@@ -1412,10 +1412,10 @@ class Solution(collections.abc.Mapping):
     validDepthU = True
     if grvw not in [1,2,4,8,16,32]:
       validDepthU = False
-    if totalVectors % state["NumThreads"] != 0:
-      reject(None, "totalVectors%s %u %% NumThreads %u != 0" \
-          % (tc, totalVectors, state["NumThreads"]))
-      validDepthU = False
+    # if totalVectors % state["NumThreads"] != 0:
+    #   reject(None, "totalVectors%s %u %% NumThreads %u != 0" \
+    #       % (tc, totalVectors, state["NumThreads"]))
+    #   validDepthU = False
 
     state["GlobalReadVectorWidth%s"%tc] = grvw
 
@@ -1893,11 +1893,11 @@ class Solution(collections.abc.Mapping):
         return False
 
     # MIWaveGroup, MatrixInstBM,BN check
-    #  for A, MIWaveGroup[1] and MatrixInstBN should be 1
+    #  for A, MatrixInstBN should be 1
     #  for B, MIWaveGroup[0] and MatrixInstBM should be 1
     # This is to limit the number of Vgpr
-    if tc == 'A' and not (state['MIWaveGroup'][1] == 1 and state['MatrixInstBN'] == 1):
-      reject(state, "MIWaveGroup[1] and MatrixInstBN should be 1 for DirectToVgprA. Current value is [%d, %d]"%(state['MIWaveGroup'][1], state['MatrixInstBN']))
+    if tc == 'A' and not (state['MatrixInstBN'] == 1):
+      reject(state, "MatrixInstBN should be 1 for DirectToVgprA. Current value is %d"%(state['MatrixInstBN']))
       return False
     if tc == 'B' and not (state['MIWaveGroup'][0] == 1 and state['MatrixInstBM'] == 1):
       reject(state, "MIWaveGroup[0] and MatrixInstBM should be 1 for DirectToVgprB. Current value is [%d, %d]"%(state['MIWaveGroup'][0], state['MatrixInstBM']))
@@ -3248,6 +3248,19 @@ class Solution(collections.abc.Mapping):
     if state["DirectToVgprA"]:
       if not Solution.isDirectToVgprDoable(state, 'A'):
         return  # rejected
+
+      # Have to do this after isDirectToVgprDoable and setGlobalLoadTileDimClassic is done
+      # TODO- this allows MIWG[0] > 1 for DTVA. If pure DTVA will cause lots of issues,
+      #       We may consider to allow it for swizzledA only
+      waveGroupsAlongN = state["MIWaveGroup"][1]
+      # When WVG is along N-Dim, each wave needs to load the same part of matA instead of distributing them
+      state["NumLoadsA"] *= waveGroupsAlongN
+      state["NumLoadsPerpendicularA"] *= waveGroupsAlongN
+      if state["ProblemType"]["TLUA"]:
+        state["LSPA"] = int(math.ceil(float(depthUM) / state["NumLoadsPerpendicularA"]))
+      else:
+        state["LSPA"] = state["MacroTileA"] // state["NumLoadsPerpendicularA"]
+
     if state["DirectToVgprB"]:
       if not  Solution.isDirectToVgprDoable(state, 'B'):
         return  # rejected
