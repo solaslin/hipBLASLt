@@ -3540,8 +3540,7 @@ class KernelWriterAssembly(KernelWriter):
       else:
         validBytesPerLoad *= (kernel["MacroTile%s"%tc] // kernel["NumLoadsPerpendicular%s"%tc] // (kernel["NumThreads"] // kernel["WavefrontSize"]))
 
-    # TODO- swizzling
-    # assert (validBytesPerLoad <= maxBytesPerLoad)
+    assert (validBytesPerLoad <= maxBytesPerLoad)
     assert (kernel[tP["lsc"]] * kernel[tP["lsp"]] % tP["glvw"] == 0)
 
     if validBytesPerLoad != maxBytesPerLoad:

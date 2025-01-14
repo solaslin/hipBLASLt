@@ -1412,10 +1412,10 @@ class Solution(collections.abc.Mapping):
     validDepthU = True
     if grvw not in [1,2,4,8,16,32]:
       validDepthU = False
-    # if totalVectors % state["NumThreads"] != 0:
-    #   reject(None, "totalVectors%s %u %% NumThreads %u != 0" \
-    #       % (tc, totalVectors, state["NumThreads"]))
-    #   validDepthU = False
+    if totalVectors % state["NumThreads"] != 0:
+      reject(None, "totalVectors%s %u %% NumThreads %u != 0" \
+          % (tc, totalVectors, state["NumThreads"]))
+      validDepthU = False
 
     state["GlobalReadVectorWidth%s"%tc] = grvw
 
@@ -1961,7 +1961,7 @@ class Solution(collections.abc.Mapping):
     if state["PrefetchGlobalRead"] == 0:
       reject(state, "DirectToVgpr%c does not supports PrefetchGlobalRead == 0."%(tc))
       return False
-    
+
     # for DTVA, does not work with NN and TLDS0
     if tc == 'A' and state["TransposeLDS"] == 0 and (not state["ProblemType"]["TransposeA"] and not state["ProblemType"]["TransposeB"]):
       reject(state, "DirectToVgpr%c does not supports NN case with TransposeLDS == 0."%(tc))
@@ -1976,7 +1976,7 @@ class Solution(collections.abc.Mapping):
     if  tc == 'B' and (not state["ProblemType"]["TransposeA"] and not state["ProblemType"]["TransposeB"]):
         # Use AssertSummationElementMultiple (BoundSizeMultiple in predicates) to exclude failed tail-loop cases
         state["AssertSummationElementMultiple"] = max(state["AssertSummationElementMultiple"], state["DepthU"])
-    
+
     # Does not work with DirectToLDS
     # -> this will be checked after DirectToLDS doable check is done
 
@@ -3252,10 +3252,8 @@ class Solution(collections.abc.Mapping):
     if state["DirectToVgprA"]:
       if not Solution.isDirectToVgprDoable(state, 'A'):
         return  # rejected
-
-
     if state["DirectToVgprB"]:
-      if not  Solution.isDirectToVgprDoable(state, 'B'):
+      if not Solution.isDirectToVgprDoable(state, 'B'):
         return  # rejected
 
     ########################################
