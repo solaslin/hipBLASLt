@@ -1458,8 +1458,10 @@ class Solution(collections.abc.Mapping):
             and totalElementsPerp % nlp == 0:
           state["NumLoadsCoalesced%s"%tc] = nlc
           state["NumLoadsPerpendicular%s"%tc] = nlp
-          #print("NumLoadsCoalesced",state["NumLoadsCoalesced%s"%tc])
-          #print("NumLoadsPerpendicular",state["NumLoadsPerpendicular%s"%tc])
+          # print("NumLoads%s:"%tc,state["NumLoads%s"%tc])
+          # print("NumLoadsCoalesced%s:"%tc,state["NumLoadsCoalesced%s"%tc])
+          # print("NumLoadsPerpendicular%s:"%tc,state["NumLoadsPerpendicular%s"%tc])
+          # print("\n")
           foundValid = True
           break
       if not foundValid:
@@ -2985,12 +2987,14 @@ class Solution(collections.abc.Mapping):
       validDepthU = True
 
       # how many elements to load
-      if state["ProblemType"]["TLUA"]:
+      if state["ProblemType"]["TLUA"]: # NT/NN
         totalElementsCoalescedA = state["MacroTileA"]
         totalElementsPerpA = depthUA
-      else:
+      else: # TN/TT
         totalElementsCoalescedA = depthUA
         totalElementsPerpA = state["MacroTileA"]
+        if state["DirectToVgprA"]:
+          totalElementsPerpA *= state["MIWaveGroup"][1]
 
       if state["ProblemType"]["TLUB"]:
         totalElementsCoalescedB = state["MacroTileB"]
@@ -3249,17 +3253,6 @@ class Solution(collections.abc.Mapping):
       if not Solution.isDirectToVgprDoable(state, 'A'):
         return  # rejected
 
-      # Have to do this after isDirectToVgprDoable and setGlobalLoadTileDimClassic is done
-      # TODO- this allows MIWG[0] > 1 for DTVA. If pure DTVA will cause lots of issues,
-      #       We may consider to allow it for swizzledA only
-      waveGroupsAlongN = state["MIWaveGroup"][1]
-      # When WVG is along N-Dim, each wave needs to load the same part of matA instead of distributing them
-      state["NumLoadsA"] *= waveGroupsAlongN
-      state["NumLoadsPerpendicularA"] *= waveGroupsAlongN
-      if state["ProblemType"]["TLUA"]:
-        state["LSPA"] = int(math.ceil(float(depthUM) / state["NumLoadsPerpendicularA"]))
-      else:
-        state["LSPA"] = state["MacroTileA"] // state["NumLoadsPerpendicularA"]
 
     if state["DirectToVgprB"]:
       if not  Solution.isDirectToVgprDoable(state, 'B'):
