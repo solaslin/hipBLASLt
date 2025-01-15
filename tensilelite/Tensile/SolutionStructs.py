@@ -1901,8 +1901,8 @@ class Solution(collections.abc.Mapping):
     if tc == 'A' and not (state['MatrixInstBN'] == 1):
       reject(state, "MatrixInstBN should be 1 for DirectToVgprA. Current value is %d"%(state['MatrixInstBN']))
       return False
-    if tc == 'B' and not (state['MIWaveGroup'][0] == 1 and state['MatrixInstBM'] == 1):
-      reject(state, "MIWaveGroup[0] and MatrixInstBM should be 1 for DirectToVgprB. Current value is [%d, %d]"%(state['MIWaveGroup'][0], state['MatrixInstBM']))
+    if tc == 'B' and not (state['MatrixInstBM'] == 1):
+      reject(state, "MatrixInstBM should be 1 for DirectToVgprB. Current value is %d"%(state['MatrixInstBM']))
       return False
 
     # Does not work with WaveSeparateGlobalRead
@@ -2996,12 +2996,14 @@ class Solution(collections.abc.Mapping):
         if state["DirectToVgprA"]:
           totalElementsPerpA *= state["MIWaveGroup"][1]
 
-      if state["ProblemType"]["TLUB"]:
+      if state["ProblemType"]["TLUB"]: # NT/TT
         totalElementsCoalescedB = state["MacroTileB"]
         totalElementsPerpB = depthUB
-      else:
+      else: # TN/NN
         totalElementsCoalescedB = depthUB
         totalElementsPerpB = state["MacroTileB"]
+        if state["DirectToVgprB"]:
+          totalElementsPerpB *= state["MIWaveGroup"][0]
 
       totalElementsA = totalElementsCoalescedA * totalElementsPerpA
       totalElementsB = totalElementsCoalescedB * totalElementsPerpB
