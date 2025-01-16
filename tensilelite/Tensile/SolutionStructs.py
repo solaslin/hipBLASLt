@@ -1894,9 +1894,9 @@ class Solution(collections.abc.Mapping):
         reject(state, "DirectToVgpr%c does not support TLU%c+ numByte >= 4 + MIInputPerThread > 1"%(tc, tc))
         return False
 
-    # MIWaveGroup, MatrixInstBM,BN check
+    # MatrixInstBM,BN check
     #  for A, MatrixInstBN should be 1
-    #  for B, MIWaveGroup[0] and MatrixInstBM should be 1
+    #  for B, MatrixInstBM should be 1
     # This is to limit the number of Vgpr
     if tc == 'A' and not (state['MatrixInstBN'] == 1):
       reject(state, "MatrixInstBN should be 1 for DirectToVgprA. Current value is %d"%(state['MatrixInstBN']))
@@ -2990,6 +2990,8 @@ class Solution(collections.abc.Mapping):
       if state["ProblemType"]["TLUA"]: # NT/NN
         totalElementsCoalescedA = state["MacroTileA"]
         totalElementsPerpA = depthUA
+        if state["DirectToVgprA"]:
+          totalElementsCoalescedA *= state["MIWaveGroup"][1]
       else: # TN/TT
         totalElementsCoalescedA = depthUA
         totalElementsPerpA = state["MacroTileA"]
@@ -2999,6 +3001,8 @@ class Solution(collections.abc.Mapping):
       if state["ProblemType"]["TLUB"]: # NT/TT
         totalElementsCoalescedB = state["MacroTileB"]
         totalElementsPerpB = depthUB
+        if state["DirectToVgprB"]:
+          totalElementsCoalescedB *= state["MIWaveGroup"][0]
       else: # TN/NN
         totalElementsCoalescedB = depthUB
         totalElementsPerpB = state["MacroTileB"]
@@ -3483,6 +3487,15 @@ class Solution(collections.abc.Mapping):
       if state["1LDSBuffer"] == -1 and state["DirectToLds"]:
         #1LDS buffer must be 0 for DirectToLdsA
         state["1LDSBuffer"] = 0
+
+      # Re-check DTV + WaveGroup after DTL is confirmed
+      if state["DirectToLds"]:
+        if state["DirectToVgprA"] and state['MIWaveGroup'][1] > 1:
+          reject(state, "DirectToLds + (DirectToVgprA + WaveGroups along N-Dim) is not supported yet")
+          return False
+        if state["DirectToVgprB"] and state['MIWaveGroup'][0] > 1:
+          reject(state, "DirectToLds + (DirectToVgprB + WaveGroups along M-Dim) is not supported yet")
+          return False
 
     # set NoLdsWriteCode if (DirectToVgpr or DirectToLds)A+B is enabled
     state["NoLdsWriteCode"] = False
