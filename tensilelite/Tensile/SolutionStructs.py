@@ -2817,9 +2817,8 @@ class Solution(collections.abc.Mapping):
     if state["ProblemType"]["SwizzleTensorB"]:
       if not state["DirectToVgprB"]:
         reject(state, f"Tensor B swizzling requires DirectToVgprB")
-      # TODO- NN fails validation due to DTVB + Tail-Loop is not working correctly
-      if not (state["ProblemType"]["TransposeA"] and not state["ProblemType"]["TransposeB"]):
-        reject(state, f"Tensor B swizzling supports TN only")
+      if state["ProblemType"]["TransposeB"]:
+        reject(state, f"Tensor B swizzling supports TN or NN only")
 
     def calcOptGRVW(lrvw: int, unrollMajorLDS: bool, datatype: DataType) -> int:
       # with UnrollMajorLDS, GRVW need to less or equal than LRVW to have conflict free LDS read with padding.
